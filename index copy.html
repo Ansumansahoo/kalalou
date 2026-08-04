@@ -1,0 +1,4876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kalalou — Wholesale Home Accents, Garden Décor & Gifts</title>
+<meta name="description" content="Kalalou — sourced, artisan-made home accents, garden décor and gifts since 1986. Wholesale to the trade." />
+
+<!-- Raleway: only the weights we use, nothing more. Page weight matters. -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+<style>
+/* ============================================================
+   KALALOU WIZSHOP PROTOTYPE
+   Single-file HTML. All CSS lives here.
+   Structure of this stylesheet:
+     1.  Design tokens (:root)
+     2.  Reset + base typography
+     3.  Layout primitives
+     4.  Prototype-only view toggle
+     5.  Utility bar
+     6.  Header + search
+     7.  Mega menu
+     8.  Hero
+     9.  Market schedule
+     10. Category grid (asymmetric)
+     11. Mid banner + SEO copy
+     12. New collection banner
+     13. Product cards (PLP)
+     14. Facet bar (top-mounted, per client)
+     15. PDP — gallery + info + stacked sections
+     16. Frequently Bought Together
+     17. Footer
+     18. Responsive breakpoints
+   ============================================================ */
+
+/* 1. TOKENS ------------------------------------------------- */
+:root {
+  --kal-primary:   #585858;  /* body text, structural grey */
+  --kal-secondary: #5e7482;  /* BUTTONS — the only chromatic accent */
+  --kal-accent:    #727272;  /* rollover / hover state */
+  --kal-bg:        #ffffff;
+  --kal-bg-alt:    #f7f7f7;  /* alternating section bands */
+  --kal-border:    #e4e4e4;
+
+  --kal-font: "Raleway", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  /* spacing scale — multiples of 4 */
+  --kal-s-1: 4px;
+  --kal-s-2: 8px;
+  --kal-s-3: 12px;
+  --kal-s-4: 16px;
+  --kal-s-5: 24px;
+  --kal-s-6: 32px;
+  --kal-s-7: 48px;
+  --kal-s-8: 64px;
+  --kal-s-9: 96px;
+
+  --kal-radius:      2px;
+  --kal-radius-lg:   4px;
+  --kal-max-width:   1400px;
+  --kal-content:     1240px;
+
+  --kal-shadow-focus: 0 0 0 2px var(--kal-secondary);
+}
+
+/* 2. RESET + BASE ------------------------------------------ */
+*, *::before, *::after { box-sizing: border-box; }
+html {
+  -webkit-text-size-adjust: 100%;
+  /* overflow-x: clip preserves sticky positioning on descendants,
+     which overflow-x: hidden breaks. */
+  overflow-x: clip;
+}
+body {
+  margin: 0;
+  font-family: var(--kal-font);
+  font-weight: 400;
+  color: var(--kal-primary);
+  background: var(--kal-bg);
+  font-size: 15px;
+  line-height: 1.55;
+  overflow-x: clip;
+  min-width: 320px;
+}
+/* Fallback for browsers that don't yet support overflow: clip. */
+@supports not (overflow-x: clip) {
+  html, body { overflow-x: hidden; }
+}
+/* Prevent runaway media without disturbing our aspect-ratio boxes */
+video, iframe { max-width: 100%; height: auto; }
+img { max-width: 100%; display: block; }
+a { color: var(--kal-primary); text-decoration: none; }
+a:hover, a:focus { color: var(--kal-accent); }
+button { font-family: inherit; cursor: pointer; }
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--kal-font);
+  font-weight: 300;
+  letter-spacing: 0.02em;
+  color: var(--kal-primary);
+  margin: 0 0 var(--kal-s-4);
+}
+h1 { font-size: clamp(24px, 2.6vw, 34px); letter-spacing: 0.06em; }
+h2 { font-size: clamp(18px, 1.8vw, 24px); letter-spacing: 0.1em; text-transform: uppercase; }
+h3 { font-size: 18px; letter-spacing: 0.08em; text-transform: uppercase; }
+h4 { font-size: 15px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; }
+
+/* Global focus ring — visible on everything interactive. */
+:where(a, button, input, select, [tabindex]):focus-visible {
+  outline: none;
+  box-shadow: var(--kal-shadow-focus);
+}
+
+/* Skip-to-content link — first thing in DOM order. */
+.kal-skip {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  background: var(--kal-primary);
+  color: #fff;
+  padding: var(--kal-s-3) var(--kal-s-4);
+  z-index: 999;
+}
+.kal-skip:focus { left: var(--kal-s-4); top: var(--kal-s-4); }
+
+/* 3. LAYOUT PRIMITIVES ------------------------------------- */
+.kal-container {
+  width: 100%;
+  max-width: var(--kal-content);
+  margin: 0 auto;
+  padding: 0 var(--kal-s-5);
+}
+.kal-section { padding: var(--kal-s-7) 0; }
+.kal-section--alt { background: var(--kal-bg-alt); }
+.kal-section__head {
+  text-align: center;
+  margin-bottom: var(--kal-s-5);
+}
+.kal-section__head p { max-width: 640px; margin: var(--kal-s-3) auto 0; }
+.kal-eyebrow {
+  display: inline-block;
+  font-size: 11px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--kal-accent);
+  margin-bottom: var(--kal-s-3);
+}
+
+/* Buttons — one style, one accent. */
+.kal-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--kal-s-2);
+  padding: 12px 24px;
+  background: var(--kal-secondary);
+  color: #fff;
+  border: 1px solid var(--kal-secondary);
+  border-radius: var(--kal-radius);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.kal-btn:hover, .kal-btn:focus { background: var(--kal-accent); border-color: var(--kal-accent); color: #fff; }
+.kal-btn--ghost {
+  background: transparent;
+  color: var(--kal-primary);
+  border-color: var(--kal-border);
+}
+.kal-btn--ghost:hover, .kal-btn--ghost:focus {
+  color: var(--kal-primary);
+  background: var(--kal-bg-alt);
+  border-color: var(--kal-primary);
+}
+.kal-btn--sm { padding: 8px 16px; font-size: 11px; }
+
+/* Visually hidden — for screen-reader-only labels. */
+.kal-sr {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0);
+  white-space: nowrap; border: 0;
+}
+
+/* 4. PROTOTYPE-ONLY VIEW TOGGLE ---------------------------- */
+/* This is not part of the design — it's a debug shim. Fixed in
+   the corner, dashed border so it reads as scaffolding. */
+.kal-proto-toggle {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 500;
+  background: #fff;
+  border: 2px dashed var(--kal-secondary);
+  border-radius: var(--kal-radius-lg);
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+.kal-proto-toggle__label {
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--kal-accent);
+  text-align: center;
+  padding-bottom: 4px;
+  border-bottom: 1px dashed var(--kal-border);
+}
+.kal-proto-toggle__group { display: flex; gap: 4px; }
+.kal-proto-toggle button {
+  padding: 6px 10px;
+  border: 1px solid var(--kal-border);
+  background: #fff;
+  color: var(--kal-primary);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-radius: var(--kal-radius);
+}
+.kal-proto-toggle button[aria-pressed="true"] {
+  background: var(--kal-secondary);
+  color: #fff;
+  border-color: var(--kal-secondary);
+}
+
+/* Only show the active view. */
+.kal-view { display: none; }
+.kal-view.is-active { display: block; }
+
+/* 5. UTILITY BAR ------------------------------------------- */
+/* Top-bar wrapper — utility + header + nav all pin together
+   as ONE sticky block so pixel-offset cascades can't break.
+   On scroll: utility + main header collapse, only nav stays. */
+.kal-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  background: #fff;
+  box-shadow: 0 1px 0 var(--kal-border);
+}
+.kal-utility,
+.kal-header {
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.2s ease, padding 0.3s ease, border-color 0.2s ease;
+  max-height: 300px;
+  opacity: 1;
+}
+.kal-topbar.is-condensed .kal-utility,
+.kal-topbar.is-condensed .kal-header {
+  max-height: 0;
+  opacity: 0;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  border-bottom-color: transparent;
+}
+.kal-topbar.is-condensed {
+  /* full-width shadow spans the viewport */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+/* Show a compact brand mark inside the nav when condensed.
+   Nav becomes a flex row so brand + list share the same centerline. */
+.kal-nav__mini-brand {
+  display: none;
+  align-items: center;
+  padding: 0;
+  flex: 0 0 auto;
+}
+.kal-nav__mini-brand img {
+  height: 48px;
+  width: auto;
+  display: block;
+  mix-blend-mode: multiply;
+}
+.kal-topbar.is-condensed .kal-nav {
+  display: flex;
+  align-items: center;
+  padding: 0 var(--kal-s-7);
+  gap: var(--kal-s-4);
+  max-width: var(--kal-content);   /* matches the expanded header's max-width */
+  margin: 0 auto;                  /* centers content with same gutters */
+  border-bottom: none;             /* full-width line comes from .kal-topbar shadow */
+}
+.kal-topbar.is-condensed .kal-nav__mini-brand { display: inline-flex; }
+.kal-topbar.is-condensed .kal-nav__list {
+  flex: 1 1 auto;
+  justify-content: center;
+  margin: 0;
+  max-width: none;
+}
+.kal-topbar.is-condensed .kal-nav__link { padding: 14px 14px; }
+.kal-topbar.is-condensed .kal-nav__icons { display: inline-flex; }
+
+/* Quick-action icon cluster — only visible in condensed nav */
+.kal-nav__icons {
+  display: none;
+  align-items: center;
+  gap: 4px;
+  flex: 0 0 auto;
+}
+.kal-nav__icon {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: var(--kal-primary);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.kal-nav__icon:hover { background: var(--kal-bg-alt); color: var(--kal-secondary); }
+.kal-nav__icon svg {
+  width: 20px; height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.kal-nav__icon-badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  background: #b98533;   /* goldenrod, matches screenshot */
+  color: #fff;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+/* Hide the badge when zero */
+.kal-nav__icon-badge:empty,
+.kal-nav__icon-badge[data-empty="true"] { display: none; }
+.kal-utility {
+  background: var(--kal-bg-alt);
+  border-bottom: 1px solid var(--kal-border);
+  font-size: 12px;
+}
+.kal-utility__inner {
+  display: flex;
+  align-items: center;
+  gap: var(--kal-s-4);
+  padding: 8px var(--kal-s-5);
+  max-width: var(--kal-content);
+  margin: 0 auto;
+  min-height: 32px;
+}
+.kal-utility__inner > .kal-loyalty-chip,
+.kal-utility__inner > .kal-hello,
+.kal-utility__inner > .kal-guest-note { margin-right: auto; }
+.kal-utility__inner > .kal-loyalty-chip ~ .kal-hello { margin-right: 0; margin-left: 0; }
+.kal-utility__inner > .kal-loyalty-chip ~ .kal-guest-note { margin-right: 0; }
+.kal-utility a { color: var(--kal-primary); letter-spacing: 0.06em; }
+.kal-utility a:hover { color: var(--kal-accent); }
+.kal-cart {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.kal-cart__count {
+  background: var(--kal-secondary);
+  color: #fff;
+  border-radius: 999px;
+  padding: 1px 7px;
+  font-size: 10px;
+  font-weight: 500;
+}
+/* ---- Pre-login vs Post-login visibility ----
+   Body class drives which elements show.
+   Guest = pre-login (default); Logged-in = post-login. */
+body.is-guest    .kal-loggedin-only { display: none !important; }
+body.is-loggedin .kal-guest-only    { display: none !important; }
+/* Button now carries the "Log in to see pricing" message in guest state,
+   so hide the duplicate link inside the specs row. */
+body.is-guest .kal-product-card__specs .kal-gated-price { display: none; }
+
+
+.kal-hello {
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--kal-primary);
+}
+.kal-hello strong { color: var(--kal-secondary); font-weight: 500; }
+
+.kal-guest-note {
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--kal-accent);
+  margin-right: auto;
+}
+.kal-guest-note a { color: var(--kal-secondary); text-decoration: underline; }
+
+.kal-price {
+  font-size: 13px;
+  color: var(--kal-primary);
+  letter-spacing: 0.03em;
+}
+.kal-price strong {
+  font-weight: 500;
+  color: var(--kal-secondary);
+  font-size: 14px;
+  margin-right: 2px;
+}
+
+.kal-pdp__price-now {
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--kal-secondary);
+  letter-spacing: 0.02em;
+}
+
+/* Loyalty chip — small logged-in-state indicator */
+.kal-loyalty-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 10px;
+  border: 1px solid var(--kal-border);
+  border-radius: 999px;
+  background: #fff;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}
+.kal-loyalty-chip__dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #c0c8cf 0%, #94a0a9 100%);
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1);
+}
+.kal-loyalty-chip strong { font-weight: 500; color: var(--kal-secondary); }
+
+/* 6. HEADER ------------------------------------------------ */
+.kal-header {
+  background: #fff;
+  border-bottom: 1px solid var(--kal-border);
+  z-index: 100;
+}
+.kal-header__inner {
+  max-width: var(--kal-content);
+  margin: 0 auto;
+  padding: var(--kal-s-2) var(--kal-s-7);
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;   /* search | logo | cta — logo always centered */
+  align-items: center;
+  gap: var(--kal-s-5);
+  min-height: 92px;
+}
+.kal-header__cta {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--kal-s-3);
+}
+.kal-header__meta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--kal-s-3);
+  font-size: 12px;
+  color: var(--kal-primary);
+  letter-spacing: 0.04em;
+}
+.kal-header__text-link {
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--kal-primary);
+  white-space: nowrap;
+}
+.kal-header__text-link:hover { color: var(--kal-secondary); }
+.kal-header__icons {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+/* Explicit column assignment so DOM order doesn't dictate visual order */
+/* On tighter viewports, hide the small text links (Quick Order / Apply / Sign in) — icons still cover it. */
+@media (max-width: 1099px) {
+  .kal-header__meta .kal-header__text-link,
+  .kal-header__meta .kal-loyalty-chip { display: none; }
+}
+@media (max-width: 767px) {
+  .kal-header__cta { flex-direction: row; gap: 0; }
+  .kal-header__meta { display: none; }
+  .kal-header__icons { gap: 2px; }
+  .kal-nav__icon { width: 40px; height: 40px; }
+}
+
+/* Logo always in the center column. Search left, cluster right. */
+.kal-header__inner > .kal-search      { grid-column: 1; justify-self: start;  align-self: center; width: 100%; max-width: 360px; }
+.kal-header__inner > .kal-wordmark    { grid-column: 2; justify-self: center; align-self: center; }
+.kal-header__inner > .kal-header__cta { grid-column: 3; justify-self: end;    align-self: center; }
+.kal-header__inner > .kal-hamburger   { grid-column: 1; justify-self: start;  align-self: center; }
+
+.kal-search {
+  display: flex;
+  border: 1px solid var(--kal-border);
+  border-radius: var(--kal-radius);
+  overflow: hidden;
+  max-width: 460px;
+  width: 100%;
+}
+.kal-search input {
+  flex: 1;
+  border: none;
+  padding: 10px 14px;
+  font: inherit;
+  color: var(--kal-primary);
+  background: #fff;
+  min-width: 0;
+}
+.kal-search button {
+  border: none;
+  background: var(--kal-primary);
+  color: #fff;
+  padding: 0 16px;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+}
+.kal-wordmark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  line-height: 1;
+}
+.kal-wordmark__img {
+  height: 108px;
+  width: auto;
+  display: block;
+  object-fit: contain;
+  /* logo JPG has white bg — blend it into the header cleanly */
+  mix-blend-mode: multiply;
+}
+.kal-header__cta {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--kal-s-4);
+}
+.kal-header__cta .kal-btn { padding: 10px 18px; }
+
+/* Hamburger — hidden by default, shown on mobile via media query. */
+.kal-hamburger {
+  display: none;
+  width: 44px; height: 44px;
+  background: transparent;
+  border: 1px solid var(--kal-border);
+  border-radius: var(--kal-radius);
+  padding: 0;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 5px;
+}
+.kal-hamburger span {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: var(--kal-primary);
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+.kal-hamburger[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.kal-hamburger[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+.kal-hamburger[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* 7. MEGA MENU --------------------------------------------- */
+.kal-nav {
+  background: #fff;
+  border-bottom: 1px solid var(--kal-border);
+  z-index: 90;
+}
+.kal-nav__list {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  flex-wrap: nowrap;
+  list-style: none;
+  padding: 0 var(--kal-s-7);
+  margin: 0 auto;
+  max-width: var(--kal-content);
+  box-sizing: border-box;
+  width: 100%;
+}
+.kal-nav__item { position: relative; }
+.kal-nav__link {
+  display: block;
+  padding: 16px 22px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--kal-primary);
+  background: none;
+  border: none;
+  white-space: nowrap;
+}
+.kal-nav__item:hover > .kal-nav__link,
+.kal-nav__link[aria-expanded="true"] { color: var(--kal-secondary); }
+.kal-nav__link--pill {
+  color: var(--kal-secondary);
+}
+.kal-mega {
+  position: absolute;
+  left: 0;
+  top: 100%;
+  background: #fff;
+  border: 1px solid var(--kal-border);
+  border-top: 2px solid var(--kal-secondary);
+  min-width: 720px;
+  padding: var(--kal-s-6);
+  display: none;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+  z-index: 95;
+}
+.kal-nav__item:hover .kal-mega,
+.kal-nav__item:focus-within .kal-mega,
+.kal-mega.is-open { display: block; }
+.kal-mega__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 260px;
+  gap: var(--kal-s-6);
+}
+.kal-mega__group h4 {
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  color: var(--kal-accent);
+  margin-bottom: var(--kal-s-3);
+  padding-bottom: var(--kal-s-2);
+  border-bottom: 1px solid var(--kal-border);
+}
+.kal-mega__group ul { list-style: none; padding: 0; margin: 0; }
+.kal-mega__group li { margin-bottom: var(--kal-s-2); }
+.kal-mega__group a {
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: var(--kal-primary);
+}
+.kal-mega__group a:hover { color: var(--kal-secondary); }
+.kal-mega__feature {
+  border-left: 1px solid var(--kal-border);
+  padding-left: var(--kal-s-5);
+}
+.kal-mega__feature img {
+  aspect-ratio: 3/4;
+  width: 100%;
+  object-fit: cover;
+  margin-bottom: var(--kal-s-3);
+}
+.kal-mega__feature p { font-size: 12px; margin: 0 0 var(--kal-s-3); }
+
+.kal-mega__utility {
+  grid-column: 1 / -1;
+  margin-top: var(--kal-s-5);
+  padding-top: var(--kal-s-4);
+  border-top: 1px solid var(--kal-border);
+  display: flex;
+  justify-content: center;
+  gap: var(--kal-s-6);
+  flex-wrap: wrap;
+}
+.kal-mega__utility a {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--kal-accent);
+}
+.kal-mega__utility a:hover { color: var(--kal-secondary); }
+
+/* 8. HERO -------------------------------------------------- */
+.kal-hero {
+  position: relative;
+  overflow: hidden;
+  background: var(--kal-bg-alt);
+}
+.kal-hero__link {
+  display: block;
+  position: relative;
+}
+.kal-hero__img {
+  width: 100%;
+  height: clamp(420px, 60vw, 680px);
+  object-fit: cover;
+  object-position: center 35%;  /* Favor upper-mid crop for portrait sources */
+}
+/* No dark overlay — image reads clean. Text stays legible via text-shadow. */
+.kal-hero__overlay-inner {
+  text-shadow: 0 2px 12px rgba(0,0,0,0.5), 0 1px 3px rgba(0,0,0,0.4);
+}
+.kal-hero__overlay-inner .kal-btn { text-shadow: none; }
+
+/* --- Carousel --- */
+.kal-hero { position: relative; }
+.kal-hero__track {
+  position: relative;
+  height: clamp(420px, 60vw, 680px);
+}
+.kal-hero__slide {
+  position: absolute;
+  inset: 0;
+  display: block;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  pointer-events: none;
+}
+.kal-hero__slide.is-active {
+  opacity: 1;
+  pointer-events: auto;
+  z-index: 1;
+}
+.kal-hero__slide .kal-hero__img { height: 100%; }
+
+/* Arrows */
+.kal-hero__arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 4;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.85);
+  color: var(--kal-primary);
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 3px;
+}
+.kal-hero__arrow:hover { background: #fff; transform: translateY(-50%) scale(1.05); }
+.kal-hero__arrow--prev { left: var(--kal-s-5); }
+.kal-hero__arrow--next { right: var(--kal-s-5); }
+
+/* Dots */
+.kal-hero__dots {
+  position: absolute;
+  bottom: var(--kal-s-5);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 4;
+  display: flex;
+  gap: 10px;
+}
+.kal-hero__dots button {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.85);
+  background: rgba(255,255,255,0.35);
+  padding: 0;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+.kal-hero__dots button[aria-selected="true"] {
+  background: #fff;
+  transform: scale(1.15);
+}
+
+@media (max-width: 767px) {
+  .kal-hero__arrow { width: 40px; height: 40px; font-size: 22px; }
+  .kal-hero__arrow--prev { left: 12px; }
+  .kal-hero__arrow--next { right: 12px; }
+  .kal-hero__dots { bottom: 14px; }
+}
+.kal-hero__overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #fff;
+  padding: var(--kal-s-6);
+  z-index: 2;
+}
+.kal-hero__overlay-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.kal-hero__overlay-inner { max-width: 640px; }
+.kal-hero__overlay .kal-eyebrow { color: rgba(255,255,255,0.8); }
+.kal-hero__overlay h1 {
+  color: #fff;
+  font-weight: 300;
+  letter-spacing: 0.16em;
+}
+.kal-hero__overlay p {
+  color: rgba(255,255,255,0.9);
+  margin: var(--kal-s-3) 0 var(--kal-s-5);
+}
+
+/* 9. MARKET SCHEDULE --------------------------------------- */
+.kal-markets__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--kal-s-4);
+}
+.kal-market {
+  position: relative;
+  border: 1px solid var(--kal-border);
+  padding: var(--kal-s-5);
+  border-radius: var(--kal-radius-lg);
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  overflow: hidden;
+  /* Single faded slate wash — same on every card. */
+  background: linear-gradient(180deg, #fbfcfd 0%, #eef2f5 100%);
+}
+
+/* A thin colored top accent to reinforce brand palette */
+.kal-market::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--kal-secondary);
+  opacity: 0.55;
+}
+.kal-market:hover {
+  border-color: var(--kal-secondary);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(88,88,88,0.08);
+}
+.kal-market:hover::before { opacity: 1; }
+.kal-market__month {
+  display: inline-block;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--kal-secondary);
+  background: rgba(255,255,255,0.7);
+  padding: 3px 10px;
+  border-radius: 999px;
+  margin-bottom: var(--kal-s-3);
+  font-weight: 500;
+}
+.kal-market__name {
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  margin-bottom: var(--kal-s-3);
+  color: var(--kal-primary);
+}
+.kal-market__meta {
+  font-size: 13px;
+  color: var(--kal-accent);
+  margin-bottom: var(--kal-s-2);
+}
+.kal-market__preday {
+  font-size: 12px;
+  color: var(--kal-accent);
+  border-top: 1px solid var(--kal-border);
+  padding-top: var(--kal-s-3);
+  margin-top: var(--kal-s-3);
+}
+
+/* 10. CATEGORY GRID (ASYMMETRIC) --------------------------- */
+.kal-catgrid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-auto-rows: 200px;
+  gap: var(--kal-s-2);
+}
+.kal-cat {
+  position: relative;
+  overflow: hidden;
+  display: block;
+  background: var(--kal-bg-alt) linear-gradient(135deg, #d8dee3 0%, #b8c2cb 100%);
+  min-height: 200px;
+}
+.kal-cat img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+  position: absolute;
+  inset: 0;
+}
+/* If an image fails to load, hide the broken-icon so the gradient background reads clean */
+.kal-cat img:not([src]),
+.kal-cat img[src=""] { display: none; }
+.kal-cat:hover img { transform: scale(1.03); }
+.kal-cat__label {
+  position: absolute;
+  left: var(--kal-s-4);
+  bottom: var(--kal-s-4);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  background: rgba(88,88,88,0.85);
+}
+/* Asymmetric spans — Bernhardt-style. 12 tiles, 6-col grid.
+   Sums to 6 across per visual row. */
+.kal-cat--2x2 { grid-column: span 2; grid-row: span 2; }
+.kal-cat--2x1 { grid-column: span 2; grid-row: span 1; }
+.kal-cat--1x2 { grid-column: span 1; grid-row: span 2; }
+.kal-cat--1x1 { grid-column: span 1; grid-row: span 1; }
+.kal-cat--3x1 { grid-column: span 3; grid-row: span 1; }
+.kal-cat--3x2 { grid-column: span 3; grid-row: span 2; }
+.kal-cat--6x1 { grid-column: span 6; grid-row: span 1; }
+
+/* 11. MID BANNER + SEO COPY -------------------------------- */
+.kal-midbanner {
+  position: relative;
+  aspect-ratio: 1440/400;
+  overflow: hidden;
+  background: var(--kal-bg-alt);
+  margin-bottom: var(--kal-s-6);
+  display: block;
+}
+.kal-midbanner img { width: 100%; height: 100%; object-fit: cover; }
+.kal-midbanner::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(40,50,58,0.75) 0%, rgba(40,50,58,0.35) 55%, rgba(40,50,58,0.05) 100%);
+  pointer-events: none;
+}
+.kal-midbanner__overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 var(--kal-s-7);
+  color: #fff;
+  z-index: 2;
+  max-width: var(--kal-content);
+  margin: 0 auto;
+  left: 0; right: 0;
+}
+.kal-midbanner h2 { color: #fff; margin-bottom: var(--kal-s-3); }
+.kal-midbanner p { color: rgba(255,255,255,0.9); max-width: 520px; }
+
+.kal-seo {
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+  color: var(--kal-primary);
+}
+.kal-seo p { margin: 0 0 var(--kal-s-3); }
+
+/* 12. NEW COLLECTION BANNER -------------------------------- */
+.kal-collectionbanner {
+  position: relative;
+  display: block;
+  aspect-ratio: 1440/500;
+  overflow: hidden;
+  background: var(--kal-bg-alt);
+}
+.kal-collectionbanner img { width: 100%; height: 100%; object-fit: cover; }
+.kal-collectionbanner::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(40,50,58,0.35) 0%, rgba(40,50,58,0.65) 100%);
+  pointer-events: none;
+}
+.kal-collectionbanner__overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  text-align: center;
+  padding: var(--kal-s-6);
+  z-index: 2;
+}
+.kal-collectionbanner h2 { color: #fff; letter-spacing: 0.16em; }
+.kal-collectionbanner p { color: rgba(255,255,255,0.9); margin-bottom: var(--kal-s-4); }
+
+/* 13. PRODUCT CARDS ---------------------------------------- */
+.kal-products {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--kal-s-5) var(--kal-s-4);
+}
+.kal-product-card {
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid transparent;
+  transition: border-color 0.15s ease;
+}
+.kal-product-card:hover { border-color: var(--kal-border); }
+.kal-product-card__media {
+  position: relative;
+  aspect-ratio: 4/5;
+  overflow: hidden;
+  background: var(--kal-bg-alt);
+}
+.kal-product-card__media img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  position: absolute; inset: 0;
+  transition: opacity 0.25s ease;
+}
+.kal-product-card__media img.is-hover {
+  opacity: 0;
+}
+.kal-product-card:hover .kal-product-card__media img.is-primary { opacity: 0; }
+.kal-product-card:hover .kal-product-card__media img.is-hover { opacity: 1; }
+
+.kal-badges {
+  position: absolute;
+  top: var(--kal-s-3);
+  left: var(--kal-s-3);
+  display: flex;
+  gap: 6px;
+  z-index: 2;
+}
+.kal-badge {
+  background: #fff;
+  color: var(--kal-primary);
+  border: 1px solid var(--kal-border);
+  padding: 3px 8px;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+.kal-badge--new  { background: var(--kal-primary); color: #fff; border-color: var(--kal-primary); }
+.kal-badge--sale { background: var(--kal-secondary); color: #fff; border-color: var(--kal-secondary); }
+.kal-badge--best { background: #fff; color: var(--kal-secondary); border-color: var(--kal-secondary); }
+
+.kal-variants-indicator {
+  position: absolute;
+  bottom: var(--kal-s-3);
+  right: var(--kal-s-3);
+  background: rgba(255,255,255,0.95);
+  padding: 4px 10px;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--kal-primary);
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  z-index: 2;
+}
+.kal-variants-indicator__swatch {
+  width: 10px; height: 10px;
+  display: inline-block;
+  border-radius: 50%;
+  background: var(--kal-primary);
+}
+
+.kal-product-card__body {
+  padding: var(--kal-s-3) 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.kal-product-card__name {
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--kal-primary);
+  margin: 0;
+  min-height: 2.6em;
+}
+.kal-product-card__sku {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--kal-accent);
+}
+.kal-product-card__specs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--kal-s-3);
+  font-size: 12px;
+  color: var(--kal-primary);
+  margin-top: 4px;
+}
+.kal-product-card__specs span strong {
+  font-weight: 500;
+  color: var(--kal-secondary);
+}
+.kal-product-card__actions {
+  margin-top: var(--kal-s-3);
+  display: flex;
+  gap: var(--kal-s-2);
+  width: 100%;
+}
+.kal-product-card__actions .kal-btn { width: 100%; padding: 10px 12px; font-size: 11px; }
+.kal-product-card__actions .kal-btn { flex: 1; }
+.kal-preorder-note {
+  font-size: 11px;
+  color: var(--kal-accent);
+  margin-top: 6px;
+  font-style: italic;
+}
+
+/* Gated pricing affordance */
+.kal-gated-price {
+  font-size: 12px;
+  color: var(--kal-secondary);
+  letter-spacing: 0.06em;
+}
+.kal-gated-price a { color: var(--kal-secondary); text-decoration: underline; }
+
+/* In-grid promo tile */
+.kal-promo-tile {
+  position: relative;
+  aspect-ratio: 4/5;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #fff;
+  background: var(--kal-primary);
+}
+.kal-promo-tile img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  opacity: 0.55;
+}
+.kal-promo-tile__body { position: relative; padding: var(--kal-s-5); }
+.kal-promo-tile__eyebrow {
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.85);
+  margin-bottom: var(--kal-s-3);
+  display: block;
+}
+.kal-promo-tile__title {
+  font-size: 22px;
+  font-weight: 300;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #fff;
+  margin: 0 0 var(--kal-s-4);
+}
+
+/* 14. FACET BAR (top-mounted, explicit client instruction) - */
+.kal-plp-head {
+  padding: var(--kal-s-5) 0 var(--kal-s-3);
+  border-bottom: 1px solid var(--kal-border);
+  background: #fff;
+}
+.kal-breadcrumbs {
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--kal-accent);
+  margin-bottom: var(--kal-s-3);
+}
+.kal-breadcrumbs a { color: var(--kal-accent); }
+.kal-breadcrumbs a:hover { color: var(--kal-secondary); }
+.kal-plp-title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--kal-s-5);
+  flex-wrap: wrap;
+}
+.kal-plp-title h1 { margin: 0; font-size: 28px; letter-spacing: 0.14em; text-transform: uppercase; }
+.kal-plp-title__count { font-size: 12px; color: var(--kal-accent); letter-spacing: 0.1em; }
+
+.kal-facetbar {
+  background: var(--kal-bg-alt);
+  border-bottom: 1px solid var(--kal-border);
+  padding: var(--kal-s-3) 0;
+  z-index: 50;
+}
+.kal-facetbar__inner {
+  display: flex;
+  align-items: center;
+  gap: var(--kal-s-3);
+  flex-wrap: wrap;
+}
+.kal-facet {
+  position: relative;
+}
+.kal-facet__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #fff;
+  border: 1px solid var(--kal-border);
+  padding: 8px 14px;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--kal-primary);
+  border-radius: var(--kal-radius);
+}
+.kal-facet__toggle:hover, .kal-facet__toggle[aria-expanded="true"] {
+  border-color: var(--kal-secondary);
+  color: var(--kal-secondary);
+}
+.kal-facet__toggle::after {
+  content: "▾";
+  font-size: 10px;
+  color: var(--kal-accent);
+}
+.kal-facet__panel {
+  display: none;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  background: #fff;
+  border: 1px solid var(--kal-border);
+  border-top: 2px solid var(--kal-secondary);
+  padding: var(--kal-s-4);
+  min-width: 240px;
+  z-index: 55;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+}
+.kal-facet__panel.is-open { display: block; }
+.kal-facet__panel label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  padding: 4px 0;
+  cursor: pointer;
+}
+.kal-facet__panel input[type="checkbox"],
+.kal-facet__panel input[type="radio"] { accent-color: var(--kal-secondary); }
+
+.kal-instock-toggle {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--kal-s-3);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--kal-primary);
+}
+/* toggle switch */
+.kal-switch {
+  position: relative;
+  width: 42px;
+  height: 22px;
+  background: #ccc;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+.kal-switch::after {
+  content: "";
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 18px; height: 18px;
+  background: #fff;
+  border-radius: 50%;
+  transition: left 0.2s ease;
+}
+.kal-switch[aria-pressed="true"] { background: var(--kal-secondary); }
+.kal-switch[aria-pressed="true"]::after { left: 22px; }
+
+.kal-sort {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--kal-primary);
+}
+.kal-sort--wrap {
+  margin-left: auto;
+  min-height: 40px;
+}
+.kal-sort select {
+  border: 1px solid var(--kal-border);
+  background: #fff;
+  padding: 8px 12px;
+  font: inherit;
+  font-size: 12px;
+  border-radius: var(--kal-radius);
+  color: var(--kal-primary);
+  min-height: 40px;
+}
+
+.kal-active-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: var(--kal-s-3) 0 0;
+}
+.kal-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: #fff;
+  border: 1px solid var(--kal-border);
+  border-radius: 999px;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.kal-chip button {
+  background: none;
+  border: none;
+  color: var(--kal-accent);
+  padding: 0;
+  font-size: 12px;
+  line-height: 1;
+}
+
+/* 15. PDP -------------------------------------------------- */
+.kal-pdp__crumbs-row { padding: var(--kal-s-4) 0; border-bottom: 1px solid var(--kal-border); margin-bottom: var(--kal-s-5); }
+.kal-pdp__crumbs {
+  font-size: 12px; letter-spacing: 0.06em; color: var(--kal-accent);
+}
+.kal-pdp__crumbs a { color: var(--kal-primary); }
+.kal-pdp__crumbs a:hover { color: var(--kal-secondary); }
+
+.kal-pdp {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--kal-s-5);
+  padding: 0 0 var(--kal-s-5);
+  align-items: start;
+}
+/* Gallery has a natural, bounded height; sticky pins it so it stays in view
+   while the info column scrolls under it. */
+.kal-pdp__gallery {
+  position: sticky;
+  top: 88px;
+  align-self: start;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--kal-s-3);
+}
+
+/* --- Media frame with corner badge + heart --- */
+.kal-pdp__media-frame {
+  position: relative;
+  /* Fixed square aspect keeps the frame bounded so the image can't
+     stretch past sensible proportions. object-fit: contain on the img
+     keeps the whole product visible (no cropping). */
+  aspect-ratio: 1/1;
+  background: var(--kal-bg-alt) linear-gradient(135deg, #eef1f3 0%, #dfe5ea 100%);
+  border-radius: var(--kal-radius-lg);
+  overflow: hidden;
+}
+.kal-pdp__main-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;         /* fill the frame edge-to-edge, no whitespace */
+  object-position: center;
+  display: block;
+}
+.kal-pdp__cat-badge {
+  position: absolute;
+  top: var(--kal-s-3);
+  left: var(--kal-s-3);
+  background: rgba(255,255,255,0.9);
+  color: var(--kal-primary);
+  padding: 5px 10px;
+  border-radius: var(--kal-radius);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  z-index: 2;
+}
+.kal-heart--pdp {
+  top: var(--kal-s-3);
+  right: var(--kal-s-3);
+  z-index: 3;
+}
+
+/* --- AR "Visualize It In Your Space" callout --- */
+.kal-pdp__ar {
+  display: grid;
+  grid-template-columns: 40px 1fr auto;
+  align-items: center;
+  gap: var(--kal-s-3);
+  background: #fdf3f6;
+  border: 1px solid #f4d5df;
+  border-radius: var(--kal-radius-lg);
+  padding: var(--kal-s-3) var(--kal-s-4);
+  margin-top: var(--kal-s-3);
+}
+.kal-pdp__ar-icon {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: #f8dee8;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: #b83364;
+}
+.kal-pdp__ar-icon svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.kal-pdp__ar-copy strong { display: block; font-size: 13px; font-weight: 500; letter-spacing: 0.04em; color: var(--kal-primary); }
+.kal-pdp__ar-copy p { margin: 2px 0 0; font-size: 12px; color: var(--kal-accent); }
+.kal-pdp__ar .kal-btn { padding: 8px 14px; font-size: 11px; background: #b83364; border-color: #b83364; }
+.kal-pdp__ar .kal-btn:hover { background: #a1284e; border-color: #a1284e; }
+
+/* --- Thumb strip (horizontal scroller below main) --- */
+.kal-pdp__thumbs-grid {
+  position: relative;
+  display: flex;
+  gap: var(--kal-s-2);
+  margin-top: var(--kal-s-3);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding-right: 40px; /* room for the scroll-hint arrow */
+  justify-content: center;   /* center thumbs under the main image */
+}
+/* When the thumb strip content overflows, keep the leftmost thumb visible instead of clipping symmetrically */
+.kal-pdp__thumbs-grid > :first-child { margin-left: auto; }
+.kal-pdp__thumbs-grid > :last-child { margin-right: auto; }
+.kal-pdp__thumbs-grid::-webkit-scrollbar { display: none; }
+.kal-pdp__thumb-tile {
+  flex: 0 0 78px;
+  height: 78px;
+  aspect-ratio: 1/1;
+  min-height: 0;
+  border: 1px solid var(--kal-border);
+  border-radius: var(--kal-radius);
+  overflow: hidden;
+  padding: 0;
+  background: var(--kal-bg-alt);
+  cursor: pointer;
+  scroll-snap-align: start;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+.kal-pdp__thumb-tile:hover { transform: translateY(-2px); }
+.kal-pdp__thumb-tile.is-active { border-color: var(--kal-secondary); border-width: 2px; }
+.kal-pdp__thumb-tile img { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* Right-side scroll hint arrow */
+.kal-pdp__thumbs-arrow {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--kal-border);
+  background: #fff;
+  color: var(--kal-primary);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  font-size: 16px;
+  padding: 0;
+}
+.kal-pdp__thumbs-arrow:hover { background: var(--kal-bg-alt); }
+/* Wrapper so the arrow can be positioned relative to the strip */
+.kal-pdp__thumbs-wrap { position: relative; margin-top: var(--kal-s-3); }
+.kal-pdp__thumbs-wrap .kal-pdp__thumbs-grid { margin-top: 0; }
+
+/* --- Header row: item # + stock chip --- */
+.kal-pdp__header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--kal-s-3);
+  margin-bottom: var(--kal-s-2);
+}
+.kal-pdp__item-no {
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--kal-accent);
+}
+.kal-pdp__stock-chip {
+  background: #fdf1cf;
+  color: #7a5e15;
+  border: 1px solid #ecd88e;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.kal-pdp__lead {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--kal-primary);
+  margin: 0 0 var(--kal-s-2);
+}
+.kal-pdp__lead:not(.is-expanded) {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.kal-pdp__lead-toggle {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--kal-secondary);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-decoration: underline;
+  cursor: pointer;
+  margin: 0 0 var(--kal-s-4);
+}
+
+/* --- Price card (bordered, holds price + incoming table + add to cart) --- */
+.kal-pdp__price-card {
+  border: 1px solid var(--kal-border);
+  border-radius: var(--kal-radius-lg);
+  padding: var(--kal-s-3);
+  margin-bottom: var(--kal-s-4);
+  background: #fff;
+}
+.kal-pdp__price-row {
+  display: block;
+  padding-bottom: var(--kal-s-4);
+  border-bottom: 1px solid var(--kal-border);
+  margin-bottom: var(--kal-s-4);
+  text-align: center;
+}
+.kal-pdp__price-block { text-align: center; }
+/* Guest state: the Add-to-Cart button already reads "Log in to see pricing" —
+   suppress the duplicate line inside the PDP price area and every card price row. */
+body.is-guest .kal-pdp__price { display: none; }
+body.is-guest .kal-similar__price { display: none; }
+body.is-guest .kal-product-card__specs .kal-gated-price { display: none; }
+.kal-pdp__price {
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--kal-primary);
+  letter-spacing: 0.01em;
+}
+.kal-pdp__price .kal-pdp__price-was {
+  text-decoration: line-through;
+  color: var(--kal-accent);
+  font-size: 16px;
+  font-weight: 400;
+  margin-right: 6px;
+}
+.kal-pdp__price .kal-pdp__price-now { color: var(--kal-secondary); font-weight: 500; }
+.kal-pdp__price-unit { font-size: 13px; color: var(--kal-accent); margin-left: 4px; font-weight: 400; }
+.kal-pdp__moq {
+  font-size: 12px;
+  color: var(--kal-accent);
+  letter-spacing: 0.04em;
+  margin-top: 4px;
+}
+.kal-pdp__incoming {
+  border: 1px solid #ecd88e;
+  border-radius: var(--kal-radius);
+  padding: 8px 12px;
+  background: #fff9e8;
+  min-width: 200px;
+  position: relative;
+}
+.kal-pdp__incoming-tag {
+  display: inline-block;
+  background: #b98533;
+  color: #fff;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 3px;
+  margin-bottom: 6px;
+}
+.kal-pdp__incoming table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.kal-pdp__incoming th {
+  text-align: left;
+  font-weight: 500;
+  color: var(--kal-accent);
+  border-bottom: 1px solid #ecd88e;
+  padding: 4px 6px;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.kal-pdp__incoming td { padding: 4px 6px; color: var(--kal-primary); }
+
+/* --- Downloads + Order Swatch side-by-side --- */
+.kal-pdp__util-row {
+  display: block;
+  margin-bottom: var(--kal-s-4);
+}
+.kal-pdp__util-block {
+  border: 1px solid var(--kal-border);
+  border-radius: var(--kal-radius-lg);
+  padding: 0;                        /* padding lives on title + chips, matches accordion */
+  background: #fff;
+  overflow: hidden;
+}
+/* Downloads title — identical structure to the accordion summary rows
+   so the two blocks read as siblings visually. */
+.kal-pdp__util-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0;
+  padding: var(--kal-s-3) var(--kal-s-4);   /* matches .kal-pdp-section summary */
+  margin: 0;
+  border-bottom: 1px solid var(--kal-border);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--kal-primary);
+  text-transform: none;
+}
+.kal-pdp__util-title > span:first-of-type {
+  flex: 1;
+  text-align: center;
+}
+.kal-pdp__util-title-spacer { display: none; }   /* not needed now that the download icon is hidden */
+.kal-pdp__util-chips { padding: var(--kal-s-3) var(--kal-s-4); }
+.kal-pdp__util-chips { display: flex; flex-direction: column; gap: 6px; }
+.kal-pdp__util-chips--inline { flex-direction: row; flex-wrap: wrap; }
+.kal-pdp__util-chips--inline a { flex: 1 1 0; justify-content: center; }
+.kal-pdp__util-chips a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--kal-border);
+  padding: 6px 10px;
+  border-radius: var(--kal-radius);
+  font-size: 11px;
+  color: var(--kal-primary);
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+.kal-pdp__util-chips a:hover { border-color: var(--kal-secondary); color: var(--kal-secondary); }
+.kal-pdp__util-chips .ico { font-size: 14px; }
+.kal-pdp__util-copy { font-size: 12px; color: var(--kal-accent); margin: 0 0 var(--kal-s-3); line-height: 1.5; }
+
+/* --- Accordions --- */
+.kal-pdp-accordions { display: flex; flex-direction: column; gap: 0; }
+.kal-pdp-section {
+  border: 1px solid var(--kal-border);
+  border-radius: 0;
+  border-bottom: none;
+  background: #fff;
+}
+.kal-pdp-section:first-child { border-radius: var(--kal-radius-lg) var(--kal-radius-lg) 0 0; }
+.kal-pdp-section:last-child { border-radius: 0 0 var(--kal-radius-lg) var(--kal-radius-lg); border-bottom: 1px solid var(--kal-border); }
+.kal-pdp-section summary {
+  list-style: none;
+  cursor: pointer;
+  padding: var(--kal-s-3) var(--kal-s-4);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--kal-primary);
+  display: block;
+  text-align: center;
+  position: relative;
+}
+.kal-pdp-section summary::-webkit-details-marker { display: none; }
+.kal-pdp-section summary::after {
+  content: "＋";
+  font-weight: 300;
+  font-size: 20px;
+  color: var(--kal-accent);
+  line-height: 1;
+  position: absolute;
+  right: var(--kal-s-4);
+  top: 50%;
+  transform: translateY(-50%);
+  transition: transform 0.15s ease;
+}
+.kal-pdp-section[open] summary::after { content: "−"; transform: translateY(-50%); }
+/* Icons removed per request — hide the SVG icons on every accordion. */
+.kal-pdp-section__icon { display: none; }
+.kal-pdp-section__body {
+  padding: var(--kal-s-3) var(--kal-s-4);
+  border-top: 1px solid var(--kal-border);
+}
+.kal-pdp-section__body .kal-attr-grid { grid-template-columns: repeat(2, 1fr); gap: 0 var(--kal-s-5); }
+
+/* --- Explore Similar Looks --- */
+.kal-similar {
+  padding: var(--kal-s-5) 0;
+  border-top: 1px solid var(--kal-border);
+  margin-top: var(--kal-s-5);
+}
+.kal-similar h2 {
+  font-size: 18px;
+  letter-spacing: 0.06em;
+  text-transform: none;
+  margin: 0 0 var(--kal-s-5);
+  font-weight: 500;
+}
+/* FBT rail — same design as Similar, adds a small AI-recommendation tag next to the title */
+.kal-fbt { border-top: none; padding-top: var(--kal-s-6); }
+.kal-fbt__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--kal-s-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--kal-s-5);
+}
+.kal-fbt__head h2 { margin: 0; }
+.kal-fbt__badge {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--kal-secondary);
+  padding: 3px 10px;
+  border: 1px solid var(--kal-border);
+  border-radius: 999px;
+  background: var(--kal-bg-alt);
+  white-space: nowrap;
+}
+.kal-similar__grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--kal-s-4);
+}
+.kal-similar__card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.kal-similar__media {
+  position: relative;
+  aspect-ratio: 4/5;
+  overflow: hidden;
+  background: var(--kal-bg-alt);
+  border-radius: var(--kal-radius);
+  display: block;
+}
+.kal-similar__media img {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: opacity 0.25s ease;
+}
+.kal-similar__media img.is-hover { opacity: 0; }
+/* Only fade the primary out when a second image actually exists on this card. */
+.kal-similar__card:has(.kal-similar__media img.is-hover):hover .kal-similar__media img.is-primary { opacity: 0; }
+.kal-similar__card:hover .kal-similar__media img.is-hover { opacity: 1; }
+.kal-similar__body {
+  padding: var(--kal-s-3) 0 0;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.kal-similar__cat {
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--kal-accent);
+  display: block;
+  margin-bottom: 4px;
+}
+.kal-similar__name {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  margin: 0 0 4px;
+  color: var(--kal-primary);
+  /* Reserve 3 lines so all cards share the same block height. */
+  min-height: 3.6em;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.kal-similar__actions { margin-top: auto; }
+.kal-similar__price { font-size: 13px; color: var(--kal-primary); margin-bottom: var(--kal-s-2); }
+.kal-similar__price strong { color: var(--kal-secondary); font-weight: 500; }
+.kal-similar__actions { margin-top: var(--kal-s-2); }
+.kal-similar__actions .kal-btn {
+  width: 100%;
+  padding: 9px 12px;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+}
+
+@media (max-width: 1099px) {
+  .kal-pdp__util-row { grid-template-columns: 1fr; }
+  .kal-similar__grid { grid-template-columns: repeat(3, 1fr); }
+  .kal-similar__grid > *:nth-child(n+4) { display: none; }
+}
+@media (max-width: 767px) {
+  .kal-pdp__price-row { grid-template-columns: 1fr; }
+  .kal-pdp__thumbs-grid { grid-template-columns: repeat(4, 1fr); }
+  .kal-similar__grid { grid-template-columns: repeat(2, 1fr); }
+  .kal-similar__grid > *:nth-child(n+3) { display: none; }
+  .kal-pdp-section__body .kal-attr-grid { grid-template-columns: 1fr; }
+}
+
+/* Legacy .kal-pdp__gallery/main/thumbs rules removed — new gallery CSS is upstream. */
+
+.kal-pdp__info { padding-top: var(--kal-s-3); }
+.kal-pdp__crumbs {
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--kal-accent);
+  margin-bottom: var(--kal-s-3);
+}
+.kal-pdp__name {
+  font-size: 22px;
+  font-weight: 300;
+  letter-spacing: 0.06em;
+  text-transform: none;
+  color: var(--kal-primary);
+  margin: 0 0 var(--kal-s-3);
+}
+.kal-pdp__sku {
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--kal-accent);
+  margin-bottom: var(--kal-s-4);
+}
+/* (Legacy PDP price rules removed — new centered rules live upstream.) */
+.kal-pdp__price-was {
+  text-decoration: line-through;
+  color: var(--kal-accent);
+  font-size: 14px;
+  margin-right: 8px;
+  font-weight: 400;
+}
+
+.kal-variants {
+  display: flex;
+  flex-direction: column;
+  gap: var(--kal-s-3);
+  margin-bottom: var(--kal-s-5);
+}
+.kal-variants__label {
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--kal-accent);
+}
+.kal-variants__swatches {
+  display: flex;
+  gap: var(--kal-s-2);
+  flex-wrap: wrap;
+}
+.kal-swatch {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: var(--kal-bg-alt);
+  border: 2px solid var(--kal-border);
+  padding: 0;
+  overflow: hidden;
+  cursor: pointer;
+}
+.kal-swatch img { width: 100%; height: 100%; object-fit: cover; }
+.kal-swatch.is-selected { border-color: var(--kal-secondary); }
+
+.kal-qty-add {
+  display: flex;
+  align-items: stretch;
+  gap: var(--kal-s-3);
+  margin-bottom: var(--kal-s-6);
+}
+
+/* --- Two-state Add-to-Cart / Quantity control (PDP) ---
+   Not in cart:  full-width "Add to Cart" button (bag icon + label)
+   In cart:      [ remove | qty | + ] row replaces the button.
+   Toggled via data-in-cart on the wrapper. */
+.kal-qty-cart { width: 100%; margin-bottom: var(--kal-s-5); }
+.kal-qty-cart[data-in-cart="false"] .kal-qty-cart__qty { display: none; }
+.kal-qty-cart[data-in-cart="true"]  .kal-qty-cart__add { display: none; }
+
+.kal-qty-cart__add {
+  width: 100%;
+  padding: 12px 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+}
+.kal-qty-cart__bag {
+  width: 18px; height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.kal-qty-cart__qty {
+  display: grid;
+  grid-template-columns: 52px 1fr 52px;
+  gap: var(--kal-s-2);
+  align-items: stretch;
+  height: 52px;
+}
+.kal-qty-cart__remove,
+.kal-qty-cart__plus {
+  border: 1px solid var(--kal-border);
+  border-radius: var(--kal-radius);
+  background: #fff;
+  color: var(--kal-primary);
+  font-size: 20px;
+  font-weight: 300;
+  line-height: 1;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.kal-qty-cart__remove { color: var(--kal-accent); }
+.kal-qty-cart__remove:hover { color: var(--kal-primary); background: var(--kal-bg-alt); }
+.kal-qty-cart__remove svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.kal-qty-cart__plus {
+  background: var(--kal-secondary);
+  color: #fff;
+  border-color: var(--kal-secondary);
+}
+.kal-qty-cart__plus:hover { background: var(--kal-accent); border-color: var(--kal-accent); }
+.kal-qty-cart__input {
+  border: 1px solid var(--kal-border);
+  border-radius: var(--kal-radius);
+  background: #fff;
+  text-align: center;
+  font: inherit;
+  font-size: 16px;
+  color: var(--kal-primary);
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  -moz-appearance: textfield;
+}
+.kal-qty-cart__input::-webkit-outer-spin-button,
+.kal-qty-cart__input::-webkit-inner-spin-button {
+  -webkit-appearance: none; margin: 0;
+}
+.kal-qty {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--kal-border);
+}
+.kal-qty button {
+  background: #fff;
+  border: none;
+  width: 40px; height: 44px;
+  font-size: 16px;
+  color: var(--kal-primary);
+}
+.kal-qty input {
+  width: 60px;
+  border: none;
+  border-left: 1px solid var(--kal-border);
+  border-right: 1px solid var(--kal-border);
+  height: 44px;
+  text-align: center;
+  font: inherit;
+  color: var(--kal-primary);
+}
+.kal-pdp .kal-btn { flex: 1; padding: 14px 24px; }
+
+/* Legacy stacked-section styles removed — new accordion rules live upstream. */
+.kal-attr-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0 var(--kal-s-7);
+}
+.kal-attr {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--kal-border);
+  font-size: 13px;
+  gap: var(--kal-s-3);
+}
+.kal-attr dt {
+  color: var(--kal-accent);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 11px;
+  align-self: center;
+}
+.kal-attr dd { margin: 0; color: var(--kal-primary); }
+
+/* 16. FREQUENTLY BOUGHT TOGETHER --------------------------- */
+.kal-recs {
+  background: var(--kal-bg-alt);
+  padding: var(--kal-s-7) 0;
+}
+.kal-recs h2 {
+  font-size: 20px;
+  text-align: center;
+  letter-spacing: 0.16em;
+  margin-bottom: var(--kal-s-2);
+}
+.kal-recs__sub {
+  text-align: center;
+  color: var(--kal-accent);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: var(--kal-s-6);
+}
+.kal-recs__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--kal-s-5);
+}
+
+/* 17. FOOTER ----------------------------------------------- */
+.kal-footer {
+  background: #fff;
+  border-top: 1px solid var(--kal-border);
+  padding: var(--kal-s-7) 0 var(--kal-s-4);
+  margin-top: var(--kal-s-7);
+  color: var(--kal-primary);
+}
+.kal-footer__cols {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--kal-s-6);
+  margin-bottom: var(--kal-s-7);
+}
+.kal-footer__col h4 {
+  font-size: 12px;
+  letter-spacing: 0.22em;
+  color: var(--kal-accent);
+  margin-bottom: var(--kal-s-4);
+}
+.kal-footer__col ul { list-style: none; padding: 0; margin: 0; }
+.kal-footer__col li { margin-bottom: var(--kal-s-2); }
+.kal-footer__col a { font-size: 13px; letter-spacing: 0.03em; }
+.kal-footer__col a:hover { color: var(--kal-secondary); }
+.kal-footer__wordmark {
+  text-align: center;
+  padding: var(--kal-s-5) 0 var(--kal-s-3);
+  border-top: 1px solid var(--kal-border);
+}
+.kal-footer__wordmark-img {
+  height: 76px;
+  width: auto;
+  display: inline-block;
+  mix-blend-mode: multiply;
+}
+/* Contact + trust sit side-by-side in a single row */
+.kal-footer__meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--kal-s-5);
+  flex-wrap: wrap;
+  padding-top: var(--kal-s-4);
+  margin-top: var(--kal-s-3);
+  border-top: 1px solid var(--kal-border);
+}
+.kal-footer__contact {
+  text-align: left;
+  font-size: 12px;
+  color: var(--kal-accent);
+  letter-spacing: 0.06em;
+}
+.kal-footer__contact span { padding: 0 var(--kal-s-2); }
+.kal-footer__legal {
+  text-align: center;
+  font-size: 11px;
+  color: var(--kal-accent);
+  letter-spacing: 0.1em;
+  margin-top: var(--kal-s-3);
+}
+.kal-footer__legal a { color: var(--kal-accent); }
+
+/* Site-level trust — reviews live at the site (not per-product) per feature matrix */
+.kal-trust {
+  text-align: right;
+  font-size: 13px;
+  color: var(--kal-primary);
+  letter-spacing: 0.04em;
+}
+.kal-trust__stars {
+  color: var(--kal-secondary);
+  letter-spacing: 0.15em;
+  margin-right: 6px;
+}
+.kal-trust strong { color: var(--kal-primary); font-weight: 500; }
+.kal-trust a { color: var(--kal-secondary); text-decoration: underline; margin-left: 6px; }
+
+
+/* ============================================================
+   INTERACTION LAYER — toast, modal, drawer, wishlist heart
+   Added so every click has visible feedback.
+   ============================================================ */
+
+/* Toast — bottom-left stack, auto-dismisses */
+.kal-toast-container {
+  position: fixed;
+  bottom: 16px;
+  left: 16px;
+  z-index: 900;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: calc(100vw - 32px);
+  pointer-events: none;
+}
+.kal-toast {
+  background: #2a2f34;
+  color: #fff;
+  padding: 12px 16px;
+  border-radius: var(--kal-radius-lg);
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 240px;
+  max-width: 380px;
+  animation: kal-toast-in 0.22s ease-out;
+  pointer-events: auto;
+}
+.kal-toast--ok    { border-left: 3px solid #7fbf8a; }
+.kal-toast--info  { border-left: 3px solid var(--kal-secondary); }
+.kal-toast--warn  { border-left: 3px solid #d9a441; }
+.kal-toast a { color: #cfd8dd; text-decoration: underline; margin-left: auto; }
+@keyframes kal-toast-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.kal-toast.is-leaving { opacity: 0; transition: opacity 0.2s ease; }
+
+/* Backdrop for modal + drawer */
+.kal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(30,36,42,0.55);
+  z-index: 700;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+.kal-backdrop.is-open { opacity: 1; pointer-events: auto; }
+
+/* Modal — centered dialog */
+.kal-modal {
+  position: fixed;
+  z-index: 800;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -46%);
+  width: min(500px, calc(100vw - 32px));
+  max-height: 90vh;
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid var(--kal-border);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+  padding: var(--kal-s-6);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.kal-modal.is-open { opacity: 1; pointer-events: auto; transform: translate(-50%, -50%); }
+.kal-modal--wide { width: min(760px, calc(100vw - 32px)); }
+.kal-modal__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--kal-s-4);
+  margin-bottom: var(--kal-s-4);
+  padding-bottom: var(--kal-s-3);
+  border-bottom: 1px solid var(--kal-border);
+}
+.kal-modal__head h2 {
+  margin: 0;
+  font-size: 20px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.kal-modal__close {
+  border: none; background: none; padding: 6px 10px;
+  font-size: 22px; line-height: 1; color: var(--kal-accent); cursor: pointer;
+}
+.kal-modal__close:hover { color: var(--kal-primary); }
+.kal-modal__body p { margin-top: 0; }
+.kal-modal__eyebrow {
+  font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--kal-accent);
+  display: block; margin-bottom: var(--kal-s-2);
+}
+.kal-form {
+  display: flex; flex-direction: column; gap: var(--kal-s-3); margin-top: var(--kal-s-3);
+}
+.kal-form label {
+  font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--kal-accent);
+  display: flex; flex-direction: column; gap: 6px;
+}
+.kal-form input, .kal-form textarea, .kal-form select {
+  border: 1px solid var(--kal-border);
+  padding: 10px 14px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--kal-primary);
+  background: #fff;
+  border-radius: var(--kal-radius);
+  min-height: 42px;
+}
+.kal-form textarea { min-height: 90px; resize: vertical; }
+.kal-form__row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--kal-s-3); }
+.kal-form__actions {
+  display: flex; gap: var(--kal-s-3); justify-content: flex-end;
+  padding-top: var(--kal-s-3); border-top: 1px solid var(--kal-border); margin-top: var(--kal-s-3);
+}
+.kal-form__actions .kal-btn { flex: 0 0 auto; }
+.kal-modal__note {
+  font-size: 12px; color: var(--kal-accent); margin-top: var(--kal-s-4);
+  padding-top: var(--kal-s-3); border-top: 1px solid var(--kal-border);
+}
+.kal-demo-hint {
+  margin-top: var(--kal-s-4);
+  padding: var(--kal-s-3) var(--kal-s-4);
+  background: var(--kal-bg-alt);
+  border: 1px dashed var(--kal-border);
+  border-radius: var(--kal-radius);
+  font-size: 12px;
+  color: var(--kal-primary);
+  line-height: 1.5;
+}
+.kal-demo-hint__eyebrow {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--kal-secondary);
+  margin-bottom: 4px;
+}
+.kal-demo-hint code {
+  background: #fff;
+  border: 1px solid var(--kal-border);
+  padding: 1px 5px;
+  border-radius: 2px;
+  font-size: 11px;
+  color: var(--kal-primary);
+}
+
+/* Cart drawer — right slide-in */
+.kal-drawer {
+  position: fixed;
+  top: 0; right: 0;
+  height: 100vh;
+  width: min(440px, 100vw);
+  background: #fff;
+  z-index: 810;
+  transform: translateX(100%);
+  transition: transform 0.28s ease;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -12px 0 36px rgba(0,0,0,0.1);
+}
+.kal-drawer.is-open { transform: translateX(0); }
+.kal-drawer__head {
+  padding: var(--kal-s-5);
+  border-bottom: 1px solid var(--kal-border);
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+.kal-drawer__head h2 { margin: 0; font-size: 16px; letter-spacing: 0.18em; text-transform: uppercase; }
+.kal-drawer__close { border: none; background: none; font-size: 22px; color: var(--kal-accent); cursor: pointer; padding: 0 4px; }
+.kal-drawer__tabs {
+  display: flex; gap: 0;
+  border-bottom: 1px solid var(--kal-border);
+}
+.kal-drawer__tab {
+  flex: 1; padding: 12px; border: none; background: none;
+  font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--kal-accent);
+  border-bottom: 2px solid transparent;
+}
+.kal-drawer__tab.is-active { color: var(--kal-secondary); border-bottom-color: var(--kal-secondary); }
+.kal-drawer__body { flex: 1; overflow-y: auto; padding: var(--kal-s-4) var(--kal-s-5); }
+.kal-drawer__cart-line {
+  display: grid;
+  grid-template-columns: 60px 1fr auto;
+  gap: var(--kal-s-3);
+  padding: var(--kal-s-3) 0;
+  border-bottom: 1px solid var(--kal-border);
+}
+.kal-drawer__cart-line img { width: 60px; height: 72px; object-fit: cover; }
+.kal-drawer__cart-line strong { font-size: 13px; font-weight: 500; display: block; }
+.kal-drawer__cart-line small { font-size: 11px; letter-spacing: 0.1em; color: var(--kal-accent); }
+.kal-drawer__cart-line button {
+  border: none; background: none; color: var(--kal-accent); font-size: 18px; padding: 4px;
+}
+.kal-drawer__foot {
+  padding: var(--kal-s-4) var(--kal-s-5);
+  border-top: 1px solid var(--kal-border);
+  background: var(--kal-bg-alt);
+}
+.kal-drawer__summary { display: grid; gap: 6px; font-size: 13px; margin-bottom: var(--kal-s-3); }
+.kal-drawer__summary .kal-drawer__row { display: flex; justify-content: space-between; }
+.kal-drawer__summary .kal-drawer__row--total {
+  padding-top: var(--kal-s-2); margin-top: var(--kal-s-2);
+  border-top: 1px solid var(--kal-border); font-weight: 500;
+}
+.kal-drawer__summary .kal-drawer__row--discount { color: var(--kal-secondary); }
+.kal-drawer .kal-btn { width: 100%; }
+.kal-drawer__note { font-size: 11px; color: var(--kal-accent); margin-top: 8px; letter-spacing: 0.06em; }
+
+/* Wishlist heart on product cards — top-right of media */
+.kal-heart {
+  position: absolute;
+  top: var(--kal-s-3);
+  right: var(--kal-s-3);
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.9);
+  border: 1px solid var(--kal-border);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 3;
+  transition: transform 0.15s ease, background 0.15s ease;
+  padding: 0;
+}
+.kal-heart svg { width: 18px; height: 18px; fill: none; stroke: var(--kal-primary); stroke-width: 1.6; transition: fill 0.15s ease, stroke 0.15s ease; }
+.kal-heart:hover { transform: scale(1.06); }
+.kal-heart.is-active svg { fill: #c86464; stroke: #c86464; }
+
+/* Sub-menu open state on mobile */
+.kal-mega.is-mobile-open { display: block; }
+
+/* 18. RESPONSIVE -------------------------------------------
+   Breakpoints, strict:
+     ≥1600px   Ultra-wide desktop  (expand container, keep chrome sane)
+     1280-1599 Standard desktop    (baseline)
+     1100-1279 Small desktop       (baseline with mild tightening)
+      900-1099 Tablet landscape    (nav wraps, mega narrows)
+      768-899  Tablet portrait     (2-col products, single-col PDP)
+      481-767  Mobile              (hamburger nav, stacked header)
+      361-480  Small mobile        (tighter grid, smaller type)
+      ≤360     Tiny mobile         (single-col fallbacks)
+   ------------------------------------------------------------ */
+
+/* --- ≥1600px  Ultra-wide desktop --- */
+@media (min-width: 1600px) {
+  :root {
+    --kal-content: 1500px;
+    --kal-max-width: 1720px;
+  }
+  h1 { font-size: 48px; }
+  .kal-hero__img { height: clamp(500px, 55vw, 780px); }
+}
+
+/* --- 1100-1279  Small desktop --- */
+@media (min-width: 1100px) and (max-width: 1279px) {
+  .kal-nav__link { padding: 14px 16px; letter-spacing: 0.16em; }
+  .kal-header__cta .kal-btn { padding: 8px 12px; font-size: 11px; letter-spacing: 0.12em; }
+}
+
+/* --- 900-1099  Tablet landscape --- */
+@media (max-width: 1099px) {
+  .kal-header__inner { grid-template-columns: 1fr auto 1fr; gap: var(--kal-s-3); padding: var(--kal-s-4); }
+  .kal-header__cta .kal-btn { padding: 8px 12px; font-size: 10px; letter-spacing: 0.12em; }
+  .kal-search { max-width: 320px; }
+  .kal-wordmark__img { height: 92px; }
+
+  .kal-mega { min-width: 560px; max-width: 92vw; }
+  .kal-mega__grid { grid-template-columns: 1fr 1fr 240px; }
+  .kal-mega__grid > .kal-mega__group:nth-of-type(3) { grid-column: 1 / -2; }
+
+  .kal-markets__grid { grid-template-columns: repeat(2, 1fr); }
+
+  .kal-catgrid { grid-template-columns: repeat(4, 1fr); grid-auto-rows: 170px; }
+  .kal-cat--3x2 { grid-column: span 4; grid-row: span 2; }
+  .kal-cat--3x1 { grid-column: span 2; grid-row: span 1; }
+  .kal-cat--2x2 { grid-column: span 2; grid-row: span 2; }
+  .kal-cat--6x1 { grid-column: span 4; grid-row: span 1; }
+
+  .kal-products { grid-template-columns: repeat(3, 1fr); }
+  .kal-recs__grid { grid-template-columns: repeat(2, 1fr); }
+  .kal-pdp { grid-template-columns: 1fr; gap: var(--kal-s-6); }
+
+  .kal-facetbar__inner { row-gap: var(--kal-s-2); }
+  .kal-sort { width: auto; margin-left: auto; margin-top: 0 !important; }
+  .kal-instock-toggle { margin-left: 0; order: -1; }
+
+  .kal-footer__cols { grid-template-columns: repeat(3, 1fr); }
+  .kal-midbanner__overlay { padding: 0 var(--kal-s-6); }
+}
+
+/* --- 768-899  Tablet portrait --- */
+@media (max-width: 899px) and (min-width: 768px) {
+  .kal-products { grid-template-columns: repeat(2, 1fr); }
+  .kal-mega { min-width: 460px; }
+  .kal-mega__grid { grid-template-columns: 1fr 1fr; }
+  .kal-mega__grid > .kal-mega__feature { grid-column: 1 / -1; border-left: none; padding-left: 0; border-top: 1px solid var(--kal-border); padding-top: var(--kal-s-4); display: grid; grid-template-columns: 100px 1fr auto; align-items: center; gap: var(--kal-s-3); }
+  .kal-mega__feature img { width: 100px; aspect-ratio: 1/1; margin: 0; }
+  .kal-plp-title h1 { font-size: 24px; }
+}
+
+@media (max-width: 767px) {
+  h1 { font-size: 26px; }
+  .kal-container { padding: 0 var(--kal-s-4); }
+  .kal-section { padding: var(--kal-s-6) 0; }
+
+  .kal-utility__inner { justify-content: space-between; gap: var(--kal-s-3); font-size: 11px; padding: 6px var(--kal-s-4); }
+  .kal-utility a:not(.kal-cart) { display: none; }
+  .kal-utility a.kal-cart, .kal-utility a[data-keep-mobile] { display: inline-flex; }
+
+  /* Mobile header — 3 rows: [hamburger + wordmark + cart-cta], [search full-width]. */
+  .kal-header__inner {
+    grid-template-columns: 44px 1fr 44px;
+    grid-template-rows: auto auto;
+    grid-template-areas:
+      "burger  brand   cta"
+      "search  search  search";
+    padding: var(--kal-s-1) var(--kal-s-4);
+    gap: var(--kal-s-2);
+    align-items: center;
+  }
+  .kal-hamburger { display: inline-flex; grid-area: burger; }
+  .kal-wordmark   { grid-area: brand; }
+  .kal-wordmark__img { height: 72px; }
+  .kal-header__cta { grid-area: cta; }
+  .kal-header__cta .kal-btn { padding: 8px 10px; font-size: 10px; letter-spacing: 0.1em; }
+  .kal-search { grid-area: search; max-width: none; }
+
+  /* Mobile nav — hidden until hamburger opens it. Full-width drawer, tap-only. */
+  .kal-nav { display: none; border-top: 1px solid var(--kal-border); }
+  .kal-nav.is-open { display: block; }
+  .kal-nav__list { flex-direction: column; align-items: stretch; }
+  .kal-nav__item { border-bottom: 1px solid var(--kal-border); }
+  .kal-nav__link {
+    padding: var(--kal-s-4);
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    text-align: left;
+    width: 100%;
+  }
+  .kal-nav__link[aria-haspopup="true"]::after {
+    content: "+";
+    float: right;
+    color: var(--kal-accent);
+    font-weight: 300;
+    font-size: 18px;
+    line-height: 1;
+  }
+  .kal-nav__link[aria-expanded="true"]::after { content: "−"; }
+
+  .kal-mega {
+    position: static;
+    min-width: 0;
+    padding: var(--kal-s-4) var(--kal-s-5) var(--kal-s-5);
+    box-shadow: none;
+    border: none;
+    border-top: 1px solid var(--kal-border);
+    background: var(--kal-bg-alt);
+  }
+  .kal-mega__grid { grid-template-columns: 1fr; gap: var(--kal-s-4); }
+  .kal-mega__feature { display: none; }  /* Save space on mobile */
+
+  .kal-hero__img { height: 500px; }
+  .kal-markets__grid { grid-template-columns: 1fr; gap: var(--kal-s-3); }
+
+  /* Category grid on mobile — clean 2-col with staggered heights.
+     No more span collapse; just alternate tall/short rhythm. */
+  .kal-catgrid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 180px; gap: var(--kal-s-2); }
+  .kal-cat { grid-column: span 1 !important; grid-row: span 1 !important; }
+  .kal-cat:nth-child(4n+1) { grid-row: span 2 !important; }
+  .kal-cat:nth-child(4n+4) { grid-row: span 2 !important; }
+  .kal-cat__label { font-size: 12px; letter-spacing: 0.12em; padding: 5px 10px; }
+
+  .kal-midbanner { aspect-ratio: 4/5; }
+  .kal-midbanner__overlay { padding: var(--kal-s-5); align-items: flex-end; }
+  .kal-collectionbanner { aspect-ratio: 4/5; }
+
+  .kal-products { grid-template-columns: repeat(2, 1fr); gap: var(--kal-s-3); }
+  .kal-product-card__name { font-size: 13px; min-height: 3em; }
+  .kal-product-card__specs { font-size: 11px; }
+  .kal-promo-tile__title { font-size: 16px; }
+
+  .kal-facetbar { padding: var(--kal-s-3) 0; }
+  .kal-facetbar__inner { gap: var(--kal-s-2); }
+  .kal-facet__toggle { padding: 8px 12px; font-size: 11px; }
+  .kal-facet__panel { left: 0; right: 0; width: auto; min-width: 0; }
+  .kal-instock-toggle { margin-left: 0; width: 100%; justify-content: space-between; order: 1; padding: var(--kal-s-2) 0; }
+  .kal-sort { flex-wrap: wrap; }
+
+  .kal-plp-title h1 { font-size: 22px; letter-spacing: 0.1em; }
+
+  .kal-pdp { padding: var(--kal-s-5) 0; }
+  .kal-pdp__name { font-size: 22px; }
+  .kal-pdp__price-row { flex-direction: column; gap: var(--kal-s-3); }
+  .kal-attr-grid { grid-template-columns: 1fr; gap: 0; }
+  .kal-recs__grid { grid-template-columns: repeat(2, 1fr); }
+
+  .kal-footer__cols { grid-template-columns: repeat(2, 1fr); gap: var(--kal-s-5); }
+  .kal-footer__wordmark-img { height: 60px; }
+  .kal-footer__contact { font-size: 11px; }
+  .kal-footer__contact span { display: block; padding: 2px 0; }
+
+  .kal-proto-toggle { right: 8px; bottom: 8px; padding: 6px; }
+  .kal-proto-toggle button { padding: 5px 8px; font-size: 10px; }
+}
+
+/* --- 361-480  Small mobile --- */
+@media (max-width: 480px) {
+  :root { --kal-s-5: 20px; --kal-s-6: 28px; --kal-s-7: 40px; --kal-s-8: 52px; }
+  .kal-container { padding: 0 var(--kal-s-3); }
+  h1 { font-size: 22px; letter-spacing: 0.08em; }
+  h2 { font-size: 20px; letter-spacing: 0.1em; }
+
+  .kal-utility__inner { padding: 6px var(--kal-s-3); }
+  .kal-header__cta .kal-btn { padding: 6px 8px; font-size: 9px; letter-spacing: 0.08em; }
+  .kal-wordmark__img { height: 62px; }
+  .kal-search input { padding: 8px 12px; font-size: 13px; }
+  .kal-search button { padding: 0 12px; font-size: 11px; }
+
+  .kal-hero__img { height: 420px; }
+  .kal-hero__overlay { padding: var(--kal-s-6) var(--kal-s-4); }
+  .kal-hero__overlay p { font-size: 13px; }
+
+  .kal-market { padding: var(--kal-s-4); }
+  .kal-market__name { font-size: 15px; }
+
+  .kal-catgrid { grid-auto-rows: 150px; }
+  .kal-cat__label { font-size: 11px; letter-spacing: 0.1em; padding: 4px 8px; }
+
+  .kal-midbanner__overlay { padding: var(--kal-s-4); }
+  .kal-collectionbanner__overlay { padding: var(--kal-s-4); }
+
+  .kal-products { gap: var(--kal-s-2); }
+  .kal-product-card__name { font-size: 12px; letter-spacing: 0.02em; }
+  .kal-product-card__sku { font-size: 10px; }
+  .kal-product-card__specs { font-size: 10px; gap: var(--kal-s-2); }
+  .kal-badge { font-size: 9px; padding: 2px 6px; }
+  .kal-product-card__actions .kal-btn { padding: 8px 10px; font-size: 10px; letter-spacing: 0.1em; }
+
+  .kal-facet__toggle { padding: 8px 10px; font-size: 10px; letter-spacing: 0.06em; }
+  .kal-plp-title { flex-direction: column; align-items: flex-start; gap: 6px; }
+  .kal-breadcrumbs { font-size: 10px; letter-spacing: 0.1em; }
+  .kal-chip { font-size: 10px; letter-spacing: 0.06em; }
+
+  .kal-pdp__name { font-size: 20px; }
+  .kal-pdp__price-block strong { font-size: 18px; }
+  .kal-qty button { width: 36px; height: 42px; }
+  .kal-qty input { width: 50px; height: 42px; }
+  .kal-pdp .kal-btn { padding: 12px 16px; font-size: 11px; }
+
+  .kal-pdp-section { padding: var(--kal-s-5) 0; }
+  .kal-attr { font-size: 12px; }
+  .kal-attr dt { font-size: 10px; }
+
+  .kal-recs__grid { gap: var(--kal-s-2); }
+
+  .kal-footer { padding: var(--kal-s-6) 0 var(--kal-s-4); }
+  .kal-footer__col a { font-size: 12px; }
+  .kal-footer__wordmark-img { height: 52px; }
+
+  .kal-proto-toggle__label { font-size: 8px; letter-spacing: 0.15em; }
+  .kal-proto-toggle button { padding: 4px 6px; font-size: 9px; letter-spacing: 0.06em; }
+}
+
+/* --- ≤360  Tiny mobile (small Androids, iPhone SE first gen) --- */
+@media (max-width: 360px) {
+  .kal-container { padding: 0 var(--kal-s-3); }
+  .kal-header__inner { grid-template-columns: 40px 1fr 40px; gap: var(--kal-s-2); }
+  .kal-hamburger { width: 40px; height: 40px; }
+  .kal-header__cta .kal-btn { padding: 5px 6px; font-size: 8px; letter-spacing: 0.05em; }
+  .kal-wordmark__img { height: 52px; }
+
+  .kal-hero__img { height: 380px; }
+  .kal-hero__overlay p { font-size: 12px; }
+
+  /* Fall back to single column where 2-col would crowd. */
+  .kal-products,
+  .kal-recs__grid { grid-template-columns: 1fr; }
+  .kal-product-card__name { min-height: 0; }
+
+  .kal-catgrid { grid-template-columns: 1fr; grid-auto-rows: 180px; }
+  .kal-cat:nth-child(4n+1),
+  .kal-cat:nth-child(4n+4) { grid-row: span 1 !important; }
+
+  .kal-footer__cols { grid-template-columns: 1fr; }
+
+  .kal-plp-title h1 { font-size: 18px; }
+  .kal-pdp__name { font-size: 18px; }
+}
+
+/* Reduced motion — respect the user. */
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+</style>
+</head>
+<body class="is-guest">
+
+<a href="#kal-main" class="kal-skip">Skip to content</a>
+
+<!-- ============================================================
+     PROTOTYPE-ONLY VIEW TOGGLE
+     Not part of the design. Switches which view is visible.
+     ============================================================ -->
+<div class="kal-proto-toggle" role="region" aria-label="Prototype view switcher">
+  <div class="kal-proto-toggle__label">Prototype view</div>
+  <div class="kal-proto-toggle__group" role="tablist">
+    <button type="button" data-view="home" aria-pressed="true"  role="tab">Home</button>
+    <button type="button" data-view="plp"  aria-pressed="false" role="tab">PLP</button>
+    <button type="button" data-view="pdp"  aria-pressed="false" role="tab">PDP</button>
+  </div>
+  <div class="kal-proto-toggle__label">Login state</div>
+  <div class="kal-proto-toggle__group" role="tablist">
+    <button type="button" data-state="guest"     aria-pressed="true"  role="tab">Guest</button>
+    <button type="button" data-state="loggedin"  aria-pressed="false" role="tab">Logged&nbsp;in</button>
+  </div>
+</div>
+
+<!-- ============================================================
+     TOP-BAR — utility + header + nav pinned together as one
+     sticky unit so nothing overlaps at any breakpoint.
+     ============================================================ -->
+<div class="kal-topbar">
+
+<!-- ============================================================
+     HEADER (shared)
+     ============================================================ -->
+<header class="kal-header" role="banner">
+  <div class="kal-header__inner">
+    <button type="button" class="kal-hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="kal-primary-nav">
+      <span></span><span></span><span></span>
+    </button>
+    <form class="kal-search" role="search" aria-label="Site search" onsubmit="event.preventDefault();">
+      <label class="kal-sr" for="kal-search-input">Search</label>
+      <input id="kal-search-input" type="search" placeholder="Search products, SKUs, categories" />
+      <button type="submit">Search</button>
+    </form>
+    <a href="#" class="kal-wordmark" aria-label="Kalalou — home">
+      <img src="https://frontierfurnishings.com/wp-content/uploads/2022/07/kalalouLogo-VendorPage.jpg" alt="Kalalou" class="kal-wordmark__img" />
+    </a>
+    <div class="kal-header__cta">
+      <div class="kal-header__meta">
+        <a href="#" class="kal-loyalty-chip kal-loggedin-only" aria-label="Loyalty — Silver tier">
+          <span class="kal-loyalty-chip__dot" aria-hidden="true"></span>
+          Loyalty · <strong>Silver</strong>
+        </a>
+        <span class="kal-hello kal-loggedin-only">Hi, <strong>Sara</strong></span>
+      </div>
+      <div class="kal-header__icons" aria-label="Quick actions">
+        <button type="button" class="kal-nav__icon" data-nav-icon="wishlist" aria-label="Wishlist">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-4.6-9.5-9.1C.9 8.7 2.7 5 6.1 5c1.9 0 3.5 1 4.9 3 1.4-2 3-3 4.9-3 3.4 0 5.2 3.7 3.6 6.9C19 16.4 12 21 12 21z"/></svg>
+        </button>
+        <button type="button" class="kal-nav__icon" data-nav-icon="account" aria-label="Account">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+        </button>
+        <button type="button" class="kal-nav__icon" data-nav-icon="cart" aria-label="Cart">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16l-2 12H6L4 6z"/><path d="M9 6V4a3 3 0 0 1 6 0v2"/></svg>
+          <span class="kal-nav__icon-badge" data-nav-cart-count>0</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ============================================================
+     NAV + MEGA MENU (shared)
+     ============================================================ -->
+<nav class="kal-nav" id="kal-primary-nav" role="navigation" aria-label="Primary">
+  <a href="#" class="kal-nav__mini-brand" aria-label="Kalalou — home">
+    <img src="https://frontierfurnishings.com/wp-content/uploads/2022/07/kalalouLogo-VendorPage.jpg" alt="Kalalou" />
+  </a>
+  <ul class="kal-nav__list">
+    <li class="kal-nav__item">
+      <a href="#" class="kal-nav__link kal-nav__link--pill">NEW</a>
+    </li>
+
+    <li class="kal-nav__item">
+      <button type="button" class="kal-nav__link" aria-haspopup="true" aria-expanded="false" data-mega="mega-hh">HOUSE + HOME</button>
+      <div class="kal-mega" id="mega-hh" role="menu">
+        <div class="kal-mega__grid">
+          <div class="kal-mega__group">
+            <h4>Furniture &amp; Lighting</h4>
+            <ul role="none">
+              <li><a href="#" role="menuitem">Shelving</a></li>
+              <li><a href="#" role="menuitem">Table</a></li>
+              <li><a href="#" role="menuitem">Tables + Carts</a></li>
+              <li><a href="#" role="menuitem">Seating</a></li>
+              <li><a href="#" role="menuitem">Display</a></li>
+              <li><a href="#" role="menuitem">Mantel</a></li>
+              <li><a href="#" role="menuitem">Lightbulb</a></li>
+              <li><a href="#" role="menuitem">Wall Sconce</a></li>
+              <li><a href="#" role="menuitem">Nightlight</a></li>
+              <li><a href="#" role="menuitem">Candleholder</a></li>
+              <li><a href="#" role="menuitem">Lamp</a></li>
+              <li><a href="#" role="menuitem">Pendant</a></li>
+            </ul>
+          </div>
+          <div class="kal-mega__group">
+            <h4>Décor</h4>
+            <ul role="none">
+              <li><a href="#" role="menuitem">Planter</a></li>
+              <li><a href="#" role="menuitem">Display</a></li>
+              <li><a href="#" role="menuitem">Filler</a></li>
+              <li><a href="#" role="menuitem">Tray</a></li>
+              <li><a href="#" role="menuitem">Platter</a></li>
+              <li><a href="#" role="menuitem">Hanging Planter</a></li>
+              <li><a href="#" role="menuitem">Bowl</a></li>
+              <li><a href="#" role="menuitem">Storage</a></li>
+              <li><a href="#" role="menuitem">Paper Towel Holder</a></li>
+              <li><a href="#" role="menuitem">Urn</a></li>
+            </ul>
+          </div>
+          <div class="kal-mega__group">
+            <h4>Wall, Kitchen &amp; Textiles</h4>
+            <ul role="none">
+              <li><a href="#" role="menuitem">Paintings + Prints</a></li>
+              <li><a href="#" role="menuitem">Painting</a></li>
+              <li><a href="#" role="menuitem">Wall Sconce</a></li>
+              <li><a href="#" role="menuitem">Clock</a></li>
+              <li><a href="#" role="menuitem">Wall Planter</a></li>
+              <li><a href="#" role="menuitem">Wreath</a></li>
+              <li><a href="#" role="menuitem">Platter</a></li>
+              <li><a href="#" role="menuitem">Glassware</a></li>
+              <li><a href="#" role="menuitem">Display</a></li>
+              <li><a href="#" role="menuitem">Towel Holder</a></li>
+              <li><a href="#" role="menuitem">Bowl</a></li>
+              <li><a href="#" role="menuitem">Serving</a></li>
+              <li><a href="#" role="menuitem">Throw</a></li>
+              <li><a href="#" role="menuitem">Doormat</a></li>
+              <li><a href="#" role="menuitem">Table Runner</a></li>
+              <li><a href="#" role="menuitem">Towel</a></li>
+            </ul>
+          </div>
+          <div class="kal-mega__feature">
+            <img src="https://fileserver-g-p.sourcerer.tech/files/fb694e4e-7e40-45a9-a88a-f260c867c265" alt="" loading="lazy" />
+            <p><strong>New Vessels Collection</strong><br />Ceramics, glass and iron for the FW26 season.</p>
+            <a href="#" class="kal-btn kal-btn--sm">Shop the Look</a>
+          </div>
+          <div class="kal-mega__utility">
+            <a href="#">All House + Home</a>
+            <a href="#">New</a>
+            <a href="#">Bestsellers</a>
+            <a href="#">In Stock</a>
+            <a href="#">Sale</a>
+          </div>
+        </div>
+      </div>
+    </li>
+
+    <li class="kal-nav__item">
+      <button type="button" class="kal-nav__link" aria-haspopup="true" aria-expanded="false" data-mega="mega-garden">GARDEN</button>
+      <div class="kal-mega" id="mega-garden" role="menu">
+        <div class="kal-mega__grid">
+          <div class="kal-mega__group">
+            <h4>Garden Containers</h4>
+            <ul role="none">
+              <li><a href="#" role="menuitem">Sculptural Accent</a></li>
+              <li><a href="#" role="menuitem">Coastal</a></li>
+              <li><a href="#" role="menuitem">Pot</a></li>
+              <li><a href="#" role="menuitem">Planters</a></li>
+              <li><a href="#" role="menuitem">Planter</a></li>
+              <li><a href="#" role="menuitem">Chime</a></li>
+              <li><a href="#" role="menuitem">Sculptures + Yard Art</a></li>
+              <li><a href="#" role="menuitem">Containers + Vases</a></li>
+            </ul>
+          </div>
+          <div class="kal-mega__group">
+            <h4>Botanica</h4>
+            <ul role="none">
+              <li><a href="#" role="menuitem">Long Stemmed</a></li>
+              <li><a href="#" role="menuitem">Bowl Filler</a></li>
+              <li><a href="#" role="menuitem">Wreath</a></li>
+              <li><a href="#" role="menuitem">Garland</a></li>
+              <li><a href="#" role="menuitem">Compote</a></li>
+              <li><a href="#" role="menuitem">Potted Plant</a></li>
+              <li><a href="#" role="menuitem">Artificial Flower</a></li>
+              <li><a href="#" role="menuitem">Bowl</a></li>
+              <li><a href="#" role="menuitem">Branches + Stems</a></li>
+              <li><a href="#" role="menuitem">Stemmed</a></li>
+            </ul>
+          </div>
+          <div class="kal-mega__group">
+            <h4>Outdoor Living</h4>
+            <ul role="none">
+              <li><a href="#" role="menuitem">Coastal</a></li>
+              <li><a href="#" role="menuitem">Yard Art</a></li>
+              <li><a href="#" role="menuitem">Fire Pit</a></li>
+              <li><a href="#" role="menuitem">Birdhouse</a></li>
+              <li><a href="#" role="menuitem">Chime</a></li>
+            </ul>
+          </div>
+          <div class="kal-mega__feature">
+            <img src="-" alt="" loading="lazy" />
+            <p><strong>Spring Garden</strong><br />Recycled iron planters, handworked in India.</p>
+            <a href="#" class="kal-btn kal-btn--sm">Shop Garden</a>
+          </div>
+          <div class="kal-mega__utility">
+            <a href="#">All Garden</a>
+            <a href="#">New</a>
+            <a href="#">Bestsellers</a>
+            <a href="#">In Stock</a>
+            <a href="#">Sale</a>
+          </div>
+        </div>
+      </div>
+    </li>
+
+    <li class="kal-nav__item">
+      <button type="button" class="kal-nav__link" aria-haspopup="true" aria-expanded="false" data-mega="mega-holiday">HOLIDAY</button>
+      <div class="kal-mega" id="mega-holiday" role="menu">
+        <div class="kal-mega__grid">
+          <div class="kal-mega__group">
+            <h4>Season</h4>
+            <ul role="none">
+              <li><a href="#" role="menuitem">Christmas</a></li>
+              <li><a href="#" role="menuitem">Halloween / Fall</a></li>
+              <li><a href="#" role="menuitem">Spring / Summer</a></li>
+              <li><a href="#" role="menuitem">Valentine's</a></li>
+              <li><a href="#" role="menuitem">Easter</a></li>
+            </ul>
+          </div>
+          <div class="kal-mega__group">
+            <h4>By Type</h4>
+            <ul role="none">
+              <li><a href="#" role="menuitem">Ornaments</a></li>
+              <li><a href="#" role="menuitem">Wreaths &amp; Garlands</a></li>
+              <li><a href="#" role="menuitem">Table Centerpieces</a></li>
+              <li><a href="#" role="menuitem">Trees &amp; Toppers</a></li>
+            </ul>
+          </div>
+          <div class="kal-mega__group">
+            <h4>Trending</h4>
+            <ul role="none">
+              <li><a href="#" role="menuitem">Best-Selling Christmas</a></li>
+              <li><a href="#" role="menuitem">In Stock Holiday</a></li>
+              <li><a href="#" role="menuitem">New for FW26</a></li>
+            </ul>
+          </div>
+          <div class="kal-mega__feature">
+            <img src="https://www.kalalou.com/Images/assets/KAL/FW26_Banners3.jpg" alt="" loading="lazy" />
+            <p><strong>Christmas 2026</strong><br />Order now to receive before September.</p>
+            <a href="#" class="kal-btn kal-btn--sm">Preorder</a>
+          </div>
+          <div class="kal-mega__utility">
+            <a href="#">All Holiday</a>
+            <a href="#">New</a>
+            <a href="#">Bestsellers</a>
+            <a href="#">In Stock</a>
+            <a href="#">Sale</a>
+          </div>
+        </div>
+      </div>
+    </li>
+
+    <li class="kal-nav__item">
+      <button type="button" class="kal-nav__link" aria-haspopup="true" aria-expanded="false" data-mega="mega-gifts">GIFTS</button>
+      <div class="kal-mega" id="mega-gifts" role="menu">
+        <div class="kal-mega__grid">
+          <div class="kal-mega__group">
+            <h4>Shop Gifts</h4>
+            <ul role="none">
+              <li><a href="#" role="menuitem">Gifts for All</a></li>
+              <li><a href="#" role="menuitem">Gifts by Occasion</a></li>
+              <li><a href="#" role="menuitem">Housewarming</a></li>
+              <li><a href="#" role="menuitem">Hostess</a></li>
+            </ul>
+          </div>
+          <div class="kal-mega__group">
+            <h4>Popular</h4>
+            <ul role="none">
+              <li><a href="#" role="menuitem">Under $25</a></li>
+              <li><a href="#" role="menuitem">Under $50</a></li>
+              <li><a href="#" role="menuitem">Sets &amp; Gift Bundles</a></li>
+            </ul>
+          </div>
+          <div class="kal-mega__group">
+            <h4>Trending</h4>
+            <ul role="none">
+              <li><a href="#" role="menuitem">New Gifts</a></li>
+              <li><a href="#" role="menuitem">Bestselling Gifts</a></li>
+              <li><a href="#" role="menuitem">In-Stock Gifts</a></li>
+            </ul>
+          </div>
+          <div class="kal-mega__feature">
+            <img src="https://www.kalalou.com/Images/assets/KAL/FW26_Banners4.jpg" alt="" loading="lazy" />
+            <p><strong>Gift Guide FW26</strong><br />Curated wholesale sets to move.</p>
+            <a href="#" class="kal-btn kal-btn--sm">See Guide</a>
+          </div>
+          <div class="kal-mega__utility">
+            <a href="#">All Gifts</a>
+            <a href="#">New</a>
+            <a href="#">Bestsellers</a>
+            <a href="#">In Stock</a>
+            <a href="#">Sale</a>
+          </div>
+        </div>
+      </div>
+    </li>
+
+    <li class="kal-nav__item">
+      <a href="#" class="kal-nav__link kal-nav__link--pill">SALE</a>
+    </li>
+    <li class="kal-nav__item">
+      <a href="#" class="kal-nav__link">STORE DISPLAY</a>
+    </li>
+    <li class="kal-nav__item">
+      <a href="#" class="kal-nav__link kal-nav__link--pill">IN STOCK</a>
+    </li>
+  </ul>
+  <div class="kal-nav__icons" aria-label="Quick actions">
+    <button type="button" class="kal-nav__icon" data-nav-icon="wishlist" aria-label="Wishlist">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-4.6-9.5-9.1C.9 8.7 2.7 5 6.1 5c1.9 0 3.5 1 4.9 3 1.4-2 3-3 4.9-3 3.4 0 5.2 3.7 3.6 6.9C19 16.4 12 21 12 21z"/></svg>
+    </button>
+    <button type="button" class="kal-nav__icon" data-nav-icon="search" aria-label="Search">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><line x1="16" y1="16" x2="21" y2="21"/></svg>
+    </button>
+    <button type="button" class="kal-nav__icon" data-nav-icon="account" aria-label="Account">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+    </button>
+    <button type="button" class="kal-nav__icon" data-nav-icon="cart" aria-label="Cart">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16l-2 12H6L4 6z"/><path d="M9 6V4a3 3 0 0 1 6 0v2"/></svg>
+      <span class="kal-nav__icon-badge" data-nav-cart-count>0</span>
+    </button>
+  </div>
+</nav>
+
+</div><!-- /.kal-topbar -->
+
+<main id="kal-main">
+
+<!-- ============================================================
+     HOME VIEW
+     ============================================================ -->
+<div class="kal-view is-active" data-view="home">
+
+  <!-- Hero — 2-slide carousel. Clean images, no dark overlay. Text uses text-shadow for readability. -->
+  <section class="kal-hero" aria-label="Featured collection" data-hero>
+    <div class="kal-hero__track">
+      <a href="#" class="kal-hero__slide is-active" data-slide="0">
+        <img class="kal-hero__img" src="https://scontent.fblr25-1.fna.fbcdn.net/v/t39.30808-6/710193253_1385299416964319_6471663635469217979_n.jpg?stp=dst-jpg_tt6&cstp=mx3072x1365&ctp=s3072x1365&_nc_cat=111&ccb=1-7&_nc_sid=cc71e4&_nc_ohc=5kM0UMC-17IQ7kNvwEOqg3l&_nc_oc=AdosrIJza3dHu8bc7rv9xYfvwYnIlHnEI21hFLDzcCmrS0-4LN7a8PlI0wgXQQ49bHA&_nc_zt=23&_nc_ht=scontent.fblr25-1.fna&_nc_gid=H7XQWjOJqaPhuyT-dhh7Ow&_nc_ss=7b289&oh=00_AQGbWhjNZcGb6ywbI9juZQsKUgXQ4UfQz0doKZ--2XGeqg&oe=6A7789C2" alt="Kalalou styled scene — FW26 collection" referrerpolicy="no-referrer" />
+        <div class="kal-hero__overlay">
+          <div class="kal-hero__overlay-inner">
+            <span class="kal-eyebrow">FW26 · Available now</span>
+            <h1>A Quiet Kind of Beauty</h1>
+            <p>Sourced and handmade in the lesser-known corners of the world. Wholesale to the trade since 1986.</p>
+            <span class="kal-btn">Shop the Collection</span>
+          </div>
+        </div>
+      </a>
+      <a href="#" class="kal-hero__slide" data-slide="1">
+        <img class="kal-hero__img" src="https://www.kalalou.com/Images/assets/KAL/FW25_market2.jpg" alt="Kalalou market showroom" />
+        <div class="kal-hero__overlay">
+          <div class="kal-hero__overlay-inner">
+            <span class="kal-eyebrow">See us in person</span>
+            <h1>Come Visit at Market</h1>
+            <p>Four markets across the country — Atlanta, Dallas, Las Vegas, High Point.</p>
+            <span class="kal-btn">See the Schedule</span>
+          </div>
+        </div>
+      </a>
+    </div>
+    <button type="button" class="kal-hero__arrow kal-hero__arrow--prev" data-hero-prev aria-label="Previous slide">‹</button>
+    <button type="button" class="kal-hero__arrow kal-hero__arrow--next" data-hero-next aria-label="Next slide">›</button>
+    <div class="kal-hero__dots" role="tablist" aria-label="Hero slides">
+      <button type="button" data-hero-goto="0" aria-selected="true"  aria-label="Slide 1 of 2"></button>
+      <button type="button" data-hero-goto="1" aria-selected="false" aria-label="Slide 2 of 2"></button>
+    </div>
+  </section>
+
+  <!-- Market schedule — 4 shows -->
+  <section class="kal-section kal-markets" aria-labelledby="markets-title">
+    <div class="kal-container">
+      <div class="kal-section__head">
+        <span class="kal-eyebrow">See us in person</span>
+        <h2 id="markets-title">Market Schedule</h2>
+        <p>Four markets across the country. Preview the line, place orders, and meet the team.</p>
+      </div>
+      <div class="kal-markets__grid">
+        <a href="#" class="kal-market">
+          <div class="kal-market__month">June</div>
+          <div class="kal-market__name">Atlanta Gift &amp; Home Market</div>
+          <div class="kal-market__meta">Building 2 · #1022</div>
+          <div class="kal-market__meta">June 9 – 14, 2026</div>
+          <div class="kal-market__preday">Preday: June 8 · By appointment</div>
+        </a>
+        <a href="#" class="kal-market">
+          <div class="kal-market__month">June</div>
+          <div class="kal-market__name">Dallas Total Home &amp; Gift</div>
+          <div class="kal-market__meta">KALALOU #209 · WTC</div>
+          <div class="kal-market__meta">June 24 – 30, 2026</div>
+          <div class="kal-market__preday">Preday: June 23 · Trade only</div>
+        </a>
+        <a href="#" class="kal-market">
+          <div class="kal-market__month">July</div>
+          <div class="kal-market__name">Las Vegas Market</div>
+          <div class="kal-market__meta">Building C · #604</div>
+          <div class="kal-market__meta">July 26 – 30, 2026</div>
+          <div class="kal-market__preday">Preday: July 25 · By appointment</div>
+        </a>
+        <a href="#" class="kal-market">
+          <div class="kal-market__month">October</div>
+          <div class="kal-market__name">High Point Market</div>
+          <div class="kal-market__meta">Suites at Market Square · #M2003</div>
+          <div class="kal-market__meta">October 17 – 21, 2026</div>
+          <div class="kal-market__preday">Preday: October 16 · Trade only</div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Category grid — asymmetric, Bernhardt-style, 12 tiles across 6-col grid -->
+  <section class="kal-section kal-section--alt" aria-labelledby="cats-title">
+    <div class="kal-container">
+      <div class="kal-section__head">
+        <h2 id="cats-title">Explore the Categories</h2>
+      </div>
+      <div class="kal-catgrid">
+        <a href="#" class="kal-cat kal-cat--2x2"><img src="https://www.kalalou.com/Images/assets/KAL/FW26_Banners2.jpg" alt="Furniture" loading="lazy" /><span class="kal-cat__label">Furniture</span></a>
+        <a href="#" class="kal-cat kal-cat--2x1"><img src="https://www.kalalou.com/Images/assets/KAL/FW25_market2.jpg" alt="Lighting" loading="lazy" /><span class="kal-cat__label">Lighting</span></a>
+        <a href="#" class="kal-cat kal-cat--2x1"><img src="https://www.kalalou.com/Images/assets/KAL/FW26_Banners3.jpg" alt="Planters" loading="lazy" /><span class="kal-cat__label">Planters</span></a>
+        <a href="#" class="kal-cat kal-cat--1x1"><img src="https://www.kalalou.com/Images/assets/KAL/FW26_Banners4.jpg" alt="Baskets + Bowls" loading="lazy" /><span class="kal-cat__label">Baskets + Bowls</span></a>
+        <a href="#" class="kal-cat kal-cat--1x1"><img src="https://www.kalalou.com/Images/assets/KAL/FW26_Banners2.jpg" alt="Mirrors" loading="lazy" /><span class="kal-cat__label">Mirrors</span></a>
+        <a href="#" class="kal-cat kal-cat--2x1"><img src="https://www.kalalou.com/Images/assets/KAL/FW25_market2.jpg" alt="Textiles + Pillows" loading="lazy" /><span class="kal-cat__label">Textiles + Pillows</span></a>
+        <a href="#" class="kal-cat kal-cat--3x2"><img src="https://www.kalalou.com/Images/assets/KAL/FW26_Banners3.jpg" alt="Garden Planters" loading="lazy" /><span class="kal-cat__label">Garden Planters</span></a>
+        <a href="#" class="kal-cat kal-cat--1x1"><img src="https://www.kalalou.com/Images/assets/KAL/FW26_Banners4.jpg" alt="Candleholders" loading="lazy" /><span class="kal-cat__label">Candleholders</span></a>
+        <a href="#" class="kal-cat kal-cat--2x1"><img src="https://www.kalalou.com/Images/assets/KAL/FW26_Banners2.jpg" alt="Holiday + Ornaments" loading="lazy" /><span class="kal-cat__label">Holiday + Ornaments</span></a>
+        <a href="#" class="kal-cat kal-cat--1x1"><img src="https://www.kalalou.com/Images/assets/KAL/FW25_market2.jpg" alt="Kitchen + Serving" loading="lazy" /><span class="kal-cat__label">Kitchen + Serving</span></a>
+        <a href="#" class="kal-cat kal-cat--2x1"><img src="https://www.kalalou.com/Images/assets/KAL/FW26_Banners3.jpg" alt="Botanica" loading="lazy" /><span class="kal-cat__label">Botanica</span></a>
+        <a href="#" class="kal-cat kal-cat--6x1"><img src="https://www.kalalou.com/Images/assets/KAL/FW26_Banners4.jpg" alt="Wall Décor" loading="lazy" /><span class="kal-cat__label">Wall Décor</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Mid banner + SEO copy -->
+  <section class="kal-section" aria-labelledby="story-title">
+    <div class="kal-container">
+      <a href="#" class="kal-midbanner" aria-label="Read our story">
+        <img src="https://www.kalalou.com/Images/assets/KAL/FW26_Banners2.jpg" alt="Forty years of sourcing — Kalalou artisans and product" />
+        <div class="kal-midbanner__overlay">
+          <div>
+            <span class="kal-eyebrow" style="color: rgba(255,255,255,0.8);">Since 1986</span>
+            <h2 id="story-title">Forty Years of Sourcing</h2>
+            <p>We travel the lesser-known corners of the world to find craftsmen making beautiful, honest, sustainable things.</p>
+          </div>
+        </div>
+      </a>
+
+      <div class="kal-seo" style="margin-top: var(--kal-s-7);">
+        <p>Kalalou is a family-owned wholesale home décor company based in Jackson, Mississippi. Since 1986 we have built long-term partnerships with artisans across India, Vietnam, the Philippines, and beyond — using recycled metal, sustainably sourced wood, and hand-loomed textiles.</p>
+        <p>Our line of roughly 1,500 SKUs spans furniture, lighting, garden décor, holiday, and gift. We are proud to be the 2025 ARTS Award winner for Home Accents Vendor of the Year.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- New collection banner -->
+  <a href="#" class="kal-collectionbanner">
+    <img src="https://www.kalalou.com/Images/assets/KAL/FW26_Banners3.jpg" alt="The new FW26 collection — over 200 new pieces" />
+    <div class="kal-collectionbanner__overlay">
+      <span class="kal-eyebrow" style="color: rgba(255,255,255,0.85);">Just landed</span>
+      <h2>The New Collection</h2>
+      <p>Over 200 new pieces for Spring 2026.</p>
+      <span class="kal-btn">Shop New</span>
+    </div>
+  </a>
+
+</div><!-- /home view -->
+
+
+<!-- ============================================================
+     PLP VIEW
+     ============================================================ -->
+<div class="kal-view" data-view="plp">
+
+  <div class="kal-plp-head">
+    <div class="kal-container">
+      <div class="kal-breadcrumbs"><a href="#">Home</a> / <a href="#">Décor</a> / <span>Planters, Vases &amp; Urns</span></div>
+      <div class="kal-plp-title">
+        <h1>Planters, Vases &amp; Urns</h1>
+        <div class="kal-plp-title__count">485 products</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top-mounted facet bar. Client instruction, not a sidebar. -->
+  <div class="kal-facetbar" role="region" aria-label="Filter products">
+    <div class="kal-container">
+      <div class="kal-facetbar__inner">
+        <div class="kal-facet">
+          <button type="button" class="kal-facet__toggle" aria-expanded="false" data-facet="f-type">Product Type</button>
+          <div class="kal-facet__panel" id="f-type">
+            <label><input type="checkbox" /> Planters</label>
+            <label><input type="checkbox" /> Vases</label>
+            <label><input type="checkbox" /> Bowls</label>
+            <label><input type="checkbox" /> Urns</label>
+            <label><input type="checkbox" /> Cache pots</label>
+          </div>
+        </div>
+        <div class="kal-facet">
+          <button type="button" class="kal-facet__toggle" aria-expanded="false" data-facet="f-color">Color</button>
+          <div class="kal-facet__panel" id="f-color">
+            <label><input type="checkbox" /> Natural / Neutral</label>
+            <label><input type="checkbox" /> Black</label>
+            <label><input type="checkbox" /> White</label>
+            <label><input type="checkbox" /> Terra Cotta</label>
+            <label><input type="checkbox" /> Grey / Slate</label>
+          </div>
+        </div>
+        <div class="kal-facet">
+          <button type="button" class="kal-facet__toggle" aria-expanded="false" data-facet="f-material">Material</button>
+          <div class="kal-facet__panel" id="f-material">
+            <label><input type="checkbox" /> Recycled Iron</label>
+            <label><input type="checkbox" /> Ceramic</label>
+            <label><input type="checkbox" /> Wood</label>
+            <label><input type="checkbox" /> Rattan</label>
+            <label><input type="checkbox" /> Terra Cotta</label>
+          </div>
+        </div>
+        <div class="kal-facet">
+          <button type="button" class="kal-facet__toggle" aria-expanded="false" data-facet="f-function">Function</button>
+          <div class="kal-facet__panel" id="f-function">
+            <label><input type="checkbox" /> Indoor</label>
+            <label><input type="checkbox" /> Outdoor</label>
+            <label><input type="checkbox" /> Tabletop</label>
+            <label><input type="checkbox" /> Floor</label>
+          </div>
+        </div>
+        <div class="kal-facet">
+          <button type="button" class="kal-facet__toggle" aria-expanded="false" data-facet="f-theme">Theme</button>
+          <div class="kal-facet__panel" id="f-theme">
+            <label><input type="checkbox" /> Rustic</label>
+            <label><input type="checkbox" /> Modern</label>
+            <label><input type="checkbox" /> Coastal</label>
+            <label><input type="checkbox" /> Farmhouse</label>
+          </div>
+        </div>
+        <div class="kal-facet">
+          <button type="button" class="kal-facet__toggle" aria-expanded="false" data-facet="f-price">Price Range</button>
+          <div class="kal-facet__panel" id="f-price">
+            <label><input type="radio" name="pr" /> Under $25</label>
+            <label><input type="radio" name="pr" /> $25 – $50</label>
+            <label><input type="radio" name="pr" /> $50 – $100</label>
+            <label><input type="radio" name="pr" /> $100 – $250</label>
+            <label><input type="radio" name="pr" /> $250+</label>
+          </div>
+        </div>
+        <div class="kal-facet">
+          <button type="button" class="kal-facet__toggle" aria-expanded="false" data-facet="f-avail">Availability</button>
+          <div class="kal-facet__panel" id="f-avail">
+            <label><input type="checkbox" /> In Stock</label>
+            <label><input type="checkbox" /> Preorder</label>
+            <label><input type="checkbox" /> Backorder</label>
+          </div>
+        </div>
+
+        <div class="kal-sort kal-sort--wrap">
+          <label for="kal-sort-select">Sort</label>
+          <select id="kal-sort-select">
+            <option>Best sellers</option>
+            <option>New arrivals</option>
+            <option>Price — low to high</option>
+            <option>Price — high to low</option>
+            <option>Name — A to Z</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="kal-active-filters" aria-live="polite">
+        <span class="kal-chip">Recycled Iron <button aria-label="Remove Recycled Iron">×</button></span>
+        <span class="kal-chip">Under $100 <button aria-label="Remove Under $100">×</button></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Product grid -->
+  <div class="kal-container" style="padding-top: var(--kal-s-5); padding-bottom: var(--kal-s-7);">
+    <div class="kal-products">
+
+      <article class="kal-product-card">
+        <a href="#" class="kal-product-card__media" aria-label="Ceramic Bull Terrier Planter">
+          
+          <img class="is-primary" src="https://fileserver-g-p.sourcerer.tech/files/370a9656-02e6-4634-9f01-d1e30ec9b237" alt="Ceramic Bull Terrier Planter" loading="lazy" />
+          <img class="is-hover"   src="https://ultronapi-g-p.sourcerer.tech/artifact/v1/file/b7b54a6c-e47d-4ebb-80f7-67af46cf46f3" alt="" loading="lazy" />
+        </a>
+        <div class="kal-product-card__body">
+          <h3 class="kal-product-card__name">Ceramic Bull Terrier Planter</h3>
+          <span class="kal-product-card__sku">SKU · CDV2264K</span>
+          <div class="kal-product-card__specs">
+            <span><strong>2 ea/Box</strong></span>
+            <span class="kal-gated-price kal-guest-only"><a href="#">Log in to see pricing</a></span>
+            <span class="kal-price kal-loggedin-only"><strong>$63.00</strong> / Unit</span>
+          </div>
+          <div class="kal-product-card__actions">
+            <button type="button" class="kal-btn" data-add-to-cart><span class="kal-guest-only">Log in to see pricing</span><span class="kal-loggedin-only">Add to Cart</span></button>
+          </div>
+        </div>
+      </article>
+
+      <article class="kal-product-card">
+        <a href="#" class="kal-product-card__media" aria-label="Ceramic Roller Skate Planter">
+          
+          <img class="is-primary" src="https://fileserver-g-p.sourcerer.tech/files/692db0b9-71d4-463b-a137-3f43953f8f6c" alt="Ceramic Roller Skate Planter" loading="lazy" />
+          <img class="is-hover"   src="https://ultronapi-g-p.sourcerer.tech/artifact/v1/file/bb08d800-f95d-4ab4-bc9f-2de4b5c6086e" alt="" loading="lazy" />
+        </a>
+        <div class="kal-product-card__body">
+          <h3 class="kal-product-card__name">Ceramic Roller Skate Planter</h3>
+          <span class="kal-product-card__sku">SKU · CDV2301K</span>
+          <div class="kal-product-card__specs">
+            <span><strong>2 ea/Box</strong></span>
+            <span class="kal-gated-price kal-guest-only"><a href="#">Log in to see pricing</a></span>
+            <span class="kal-price kal-loggedin-only"><strong>$21.00</strong> / Unit</span>
+          </div>
+          <div class="kal-product-card__actions">
+            <button type="button" class="kal-btn" data-add-to-cart><span class="kal-guest-only">Log in to see pricing</span><span class="kal-loggedin-only">Add to Cart</span></button>
+          </div>
+        </div>
+      </article>
+
+      <article class="kal-product-card">
+        <a href="#" class="kal-product-card__media" aria-label="Terracotta Urn with Vine Detail">
+          
+          <img class="is-primary" src="https://fileserver-g-p.sourcerer.tech/files/0829e25b-b3dc-487a-9b70-4a5b75079e94" alt="Terracotta Urn with Vine Detail" loading="lazy" />
+          <img class="is-hover"   src="https://ultronapi-g-p.sourcerer.tech/artifact/v1/file/de856c07-2cf4-402b-b3eb-3877d047d00c" alt="" loading="lazy" />
+        </a>
+        <div class="kal-product-card__body">
+          <h3 class="kal-product-card__name">Terracotta Urn with Vine Detail</h3>
+          <span class="kal-product-card__sku">SKU · NSKY1000</span>
+          <div class="kal-product-card__specs">
+            <span><strong>1 ea/Box</strong></span>
+            <span class="kal-gated-price kal-guest-only"><a href="#">Log in to see pricing</a></span>
+            <span class="kal-price kal-loggedin-only"><strong>$60.00</strong> / Unit</span>
+          </div>
+          <div class="kal-product-card__actions">
+            <button type="button" class="kal-btn" data-add-to-cart><span class="kal-guest-only">Log in to see pricing</span><span class="kal-loggedin-only">Add to Cart</span></button>
+          </div>
+        </div>
+      </article>
+
+      <article class="kal-product-card">
+        <a href="#" class="kal-product-card__media" aria-label="Terracotta Frog Planter with Rustic Glaze">
+          <div class="kal-badges"><span class="kal-badge kal-badge--new">New</span></div>
+          <img class="is-primary" src="https://fileserver-g-p.sourcerer.tech/files/7d357a79-36f2-4e8d-b1a6-3f8e3fbc82e3" alt="Terracotta Frog Planter with Rustic Glaze" loading="lazy" />
+          <img class="is-hover"   src="https://ultronapi-g-p.sourcerer.tech/artifact/v1/file/6bda8637-e5fa-49e0-beb7-0c5104634b6d" alt="" loading="lazy" />
+        </a>
+        <div class="kal-product-card__body">
+          <h3 class="kal-product-card__name">Terracotta Frog Planter with Rustic Glaze</h3>
+          <span class="kal-product-card__sku">SKU · VDH1005K</span>
+          <div class="kal-product-card__specs">
+            <span><strong>2 ea/Box</strong></span>
+            <span class="kal-gated-price kal-guest-only"><a href="#">Log in to see pricing</a></span>
+            <span class="kal-price kal-loggedin-only"><strong>$33.00</strong> / Unit</span>
+          </div>
+          <div class="kal-product-card__actions">
+            <button type="button" class="kal-btn" data-add-to-cart><span class="kal-guest-only">Log in to see pricing</span><span class="kal-loggedin-only">Add to Cart</span></button>
+          </div>
+        </div>
+      </article>
+
+
+      <article class="kal-product-card">
+        <a href="#" class="kal-product-card__media" aria-label="Spun Bamboo Vase with Multi-Color Capiz Shell Detail / #3">
+          <div class="kal-badges"><span class="kal-badge kal-badge--new">New</span></div>
+          <img class="is-primary" src="https://fileserver-g-p.sourcerer.tech/files/629e3496-e382-41eb-b82e-becf62090ea5" alt="Spun Bamboo Vase with Multi-Color Capiz Shell Detail / #3" loading="lazy" />
+          <img class="is-hover"   src="https://ultronapi-g-p.sourcerer.tech/artifact/v1/file/1eb838a0-8897-4437-b65b-594968951fbd" alt="" loading="lazy" />
+        </a>
+        <div class="kal-product-card__body">
+          <h3 class="kal-product-card__name">Spun Bamboo Vase with Multi-Color Capiz Shell Detail / #3</h3>
+          <span class="kal-product-card__sku">SKU · VMC1005K</span>
+          <div class="kal-product-card__specs">
+            <span><strong>2 ea/Box</strong></span>
+            <span class="kal-gated-price kal-guest-only"><a href="#">Log in to see pricing</a></span>
+            <span class="kal-price kal-loggedin-only"><strong>$84.00</strong> / Unit</span>
+          </div>
+          <div class="kal-product-card__actions">
+            <button type="button" class="kal-btn" data-add-to-cart><span class="kal-guest-only">Log in to see pricing</span><span class="kal-loggedin-only">Add to Cart</span></button>
+          </div>
+        </div>
+      </article>
+
+      <article class="kal-product-card">
+        <a href="#" class="kal-product-card__media" aria-label="Faux Concrete Sheep Planter">
+          
+          <img class="is-primary" src="https://fileserver-g-p.sourcerer.tech/files/3c90fea8-44ee-4a0a-8a1f-31e5c0af9d8d" alt="Faux Concrete Sheep Planter" loading="lazy" />
+          <img class="is-hover"   src="https://ultronapi-g-p.sourcerer.tech/artifact/v1/file/6c71da20-adb7-411c-a3b8-65a333489485" alt="" loading="lazy" />
+        </a>
+        <div class="kal-product-card__body">
+          <h3 class="kal-product-card__name">Faux Concrete Sheep Planter</h3>
+          <span class="kal-product-card__sku">SKU · CDGG1003</span>
+          <div class="kal-product-card__specs">
+            <span><strong>1 ea/Box</strong></span>
+            <span class="kal-gated-price kal-guest-only"><a href="#">Log in to see pricing</a></span>
+            <span class="kal-price kal-loggedin-only"><strong>$46.00</strong> / Unit</span>
+          </div>
+          <div class="kal-product-card__actions">
+            <button type="button" class="kal-btn" data-add-to-cart><span class="kal-guest-only">Log in to see pricing</span><span class="kal-loggedin-only">Add to Cart</span></button>
+          </div>
+        </div>
+      </article>
+
+      <article class="kal-product-card">
+        <a href="#" class="kal-product-card__media" aria-label="Set of 2 Twisted Paper Vases with Ruffled Rims">
+          <div class="kal-badges"><span class="kal-badge kal-badge--new">New</span></div>
+          <img class="is-primary" src="https://fileserver-g-p.sourcerer.tech/files/a905120f-e2f9-4ddb-8286-166906c5b7fa" alt="Set of 2 Twisted Paper Vases with Ruffled Rims" loading="lazy" />
+          <img class="is-hover"   src="https://ultronapi-g-p.sourcerer.tech/artifact/v1/file/5a05a941-f88f-4f79-8bac-a5fd1efcf4bf" alt="" loading="lazy" />
+        </a>
+        <div class="kal-product-card__body">
+          <h3 class="kal-product-card__name">Set of 2 Twisted Paper Vases with Ruffled Rims</h3>
+          <span class="kal-product-card__sku">SKU · CHAU1000K</span>
+          <div class="kal-product-card__specs">
+            <span><strong>2 set/Box</strong></span>
+            <span class="kal-gated-price kal-guest-only"><a href="#">Log in to see pricing</a></span>
+            <span class="kal-price kal-loggedin-only"><strong>$52.00</strong> / Unit</span>
+          </div>
+          <div class="kal-product-card__actions">
+            <button type="button" class="kal-btn" data-add-to-cart><span class="kal-guest-only">Log in to see pricing</span><span class="kal-loggedin-only">Add to Cart</span></button>
+          </div>
+        </div>
+      </article>
+
+      <article class="kal-product-card">
+        <a href="#" class="kal-product-card__media" aria-label="Eight Metal Bud Vases with Hand-Painted Wooden Base — preorder">
+          <div class="kal-badges"><span class="kal-badge">Preorder</span></div>
+          <img class="is-primary" src="https://fileserver-g-p.sourcerer.tech/files/8e016c4a-8205-42e1-96a2-8790d77ca66e" alt="Eight Metal Bud Vases with Hand-Painted Wooden Base" loading="lazy" />
+          <img class="is-hover"   src="https://ultronapi-g-p.sourcerer.tech/artifact/v1/file/08e00d83-3548-4a42-a669-bb0820f7d58b" alt="" loading="lazy" />
+        </a>
+        <div class="kal-product-card__body">
+          <h3 class="kal-product-card__name">Eight Metal Bud Vases with Hand-Painted Wooden Base</h3>
+          <span class="kal-product-card__sku">SKU · NMCC1467</span>
+          <div class="kal-product-card__specs">
+            <span><strong>1 ea/Box</strong></span>
+            <span class="kal-gated-price kal-guest-only"><a href="#">Log in to see pricing</a></span>
+            <span class="kal-price kal-loggedin-only"><strong>$76.00</strong> / Unit</span>
+          </div>
+          <div class="kal-product-card__actions">
+            <button type="button" class="kal-btn kal-btn--ghost">Preorder</button>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <!-- Pagination -->
+    <nav aria-label="Pagination" style="text-align: center; margin-top: var(--kal-s-8);">
+      <a href="#" class="kal-btn kal-btn--ghost kal-btn--sm">‹ Prev</a>
+      <span style="padding: 0 var(--kal-s-4); color: var(--kal-accent); font-size: 13px; letter-spacing: 0.1em;">Page 1 of 12</span>
+      <a href="#" class="kal-btn kal-btn--ghost kal-btn--sm">Next ›</a>
+    </nav>
+  </div>
+
+</div><!-- /plp view -->
+
+
+<!-- ============================================================
+     PDP VIEW
+     ============================================================ -->
+<div class="kal-view" data-view="pdp">
+  <div class="kal-container">
+
+    <div class="kal-pdp__crumbs-row">
+      <div class="kal-pdp__crumbs"><a href="#">Home</a> / <a href="#">All products</a> / <span>Faux Concrete Sheep Planter</span></div>
+    </div>
+
+    <div class="kal-pdp">
+
+      <!-- LEFT COLUMN: gallery + AR + thumb grid -->
+      <div class="kal-pdp__gallery">
+        <div class="kal-pdp__media-frame">
+          <span class="kal-pdp__cat-badge">Kalalou Original</span>
+          <button type="button" class="kal-heart kal-heart--pdp" aria-label="Save to wishlist" aria-pressed="false">
+            <svg viewBox="0 0 24 24"><path d="M12 21s-7-4.6-9.5-9.1C.9 8.7 2.7 5 6.1 5c1.9 0 3.5 1 4.9 3 1.4-2 3-3 4.9-3 3.4 0 5.2 3.7 3.6 6.9C19 16.4 12 21 12 21z"/></svg>
+          </button>
+          <img id="kal-pdp-main-img" class="kal-pdp__main-img" src="https://fileserver-g-p.sourcerer.tech/files/3c90fea8-44ee-4a0a-8a1f-31e5c0af9d8d" alt="Faux Concrete Sheep Planter, front view" />
+        </div>
+
+        <div class="kal-pdp__thumbs-wrap">
+          <div class="kal-pdp__thumbs-grid" role="tablist" aria-label="Product images">
+          <button class="kal-pdp__thumb-tile is-active" data-src="https://fileserver-g-p.sourcerer.tech/files/3c90fea8-44ee-4a0a-8a1f-31e5c0af9d8d" aria-label="View 1"><img src="https://fileserver-g-p.sourcerer.tech/files/3c90fea8-44ee-4a0a-8a1f-31e5c0af9d8d" alt="" loading="lazy" /></button><button class="kal-pdp__thumb-tile" data-src="https://ultronapi-g-p.sourcerer.tech/artifact/v1/file/6c71da20-adb7-411c-a3b8-65a333489485" aria-label="View 2"><img src="https://ultronapi-g-p.sourcerer.tech/artifact/v1/file/6c71da20-adb7-411c-a3b8-65a333489485" alt="" loading="lazy" /></button><button class="kal-pdp__thumb-tile" data-src="https://ultronapi-g-p.sourcerer.tech/artifact/v1/file/d74c7d1f-c3cd-4e9c-9660-1b2ba8b1e1d9" aria-label="View 3"><img src="https://ultronapi-g-p.sourcerer.tech/artifact/v1/file/d74c7d1f-c3cd-4e9c-9660-1b2ba8b1e1d9" alt="" loading="lazy" /></button><button class="kal-pdp__thumb-tile" data-src="https://ultronapi-g-p.sourcerer.tech/artifact/v1/file/aeae1065-1f83-4e78-a20f-c4ae9cd4142c" aria-label="View 4"><img src="https://ultronapi-g-p.sourcerer.tech/artifact/v1/file/aeae1065-1f83-4e78-a20f-c4ae9cd4142c" alt="" loading="lazy" /></button><button class="kal-pdp__thumb-tile" data-src="https://ultronapi-g-p.sourcerer.tech/artifact/v1/file/226ab2b9-0fb8-4749-be54-d8d780399fef" aria-label="View 5"><img src="https://ultronapi-g-p.sourcerer.tech/artifact/v1/file/226ab2b9-0fb8-4749-be54-d8d780399fef" alt="" loading="lazy" /></button><button class="kal-pdp__thumb-tile" data-src="https://ultronapi-g-p.sourcerer.tech/artifact/v1/file/27dc7695-0126-4453-856a-1a94e6ba65df" aria-label="View 6"><img src="https://ultronapi-g-p.sourcerer.tech/artifact/v1/file/27dc7695-0126-4453-856a-1a94e6ba65df" alt="" loading="lazy" /></button>
+        </div>
+          <button type="button" class="kal-pdp__thumbs-arrow" aria-label="Scroll thumbnails right" data-thumbs-next>›</button>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN: info + price card + downloads + swatch + accordions -->
+      <div class="kal-pdp__info">
+        <div class="kal-pdp__header-row">
+          <div class="kal-pdp__item-no">CDGG1003</div>
+          <span class="kal-pdp__stock-chip">Back Order: 08/08/2026</span>
+        </div>
+        <h1 class="kal-pdp__name">Faux Concrete Sheep Planter</h1>
+        <p class="kal-pdp__lead" data-pdp-lead>Crafted in a faux concrete finish, this sheep planter brings a calm, rustic charm to any space. The sculpted texture and soft, weathered tones give it the look of a piece discovered in a cottage garden. A roomy planting area makes it easy to fill with greenery or seasonal stems. Finished on all sides with a solid bottom and no drain hole, it is designed for effortless styling indoors or in covered outdoor spaces. This piece adds a gentle, pastoral touch wherever it is placed.</p>
+        <button type="button" class="kal-pdp__lead-toggle" data-pdp-lead-toggle aria-expanded="false">Show more</button>
+
+        <div class="kal-pdp__price-card">
+          <div class="kal-pdp__price-row">
+            <div class="kal-pdp__price-block">
+              <div class="kal-pdp__price">
+                <span class="kal-guest-only kal-gated-price"><a href="#">Log in to see pricing</a></span>
+                <span class="kal-loggedin-only">
+                  <span class="kal-pdp__price-was">$46.00</span>
+                  <span class="kal-pdp__price-now">$40.00</span>
+                  <span class="kal-pdp__price-unit">/ ea</span>
+                </span>
+              </div>
+              <div class="kal-pdp__moq">Order in multiples of 1 · Box: 1 ea/Box</div>
+            </div>
+          </div>
+          <div class="kal-qty-cart" data-in-cart="false" data-qty="1">
+            <button type="button" class="kal-btn kal-qty-cart__add" data-add-to-cart>
+              <svg class="kal-qty-cart__bag" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 8h16l-1.5 12H5.5L4 8z"/>
+                <path d="M8 8V6a4 4 0 0 1 8 0v2"/>
+              </svg>
+              <span class="kal-guest-only">Log in to see pricing</span>
+              <span class="kal-loggedin-only">Add to Cart</span>
+            </button>
+            <div class="kal-qty-cart__qty" role="group" aria-label="Quantity in cart">
+              <button type="button" class="kal-qty-cart__remove" aria-label="Remove one">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M4 7h16"/>
+                  <path d="M6 7l1 13h10l1-13"/>
+                  <path d="M9 7V4h6v3"/>
+                </svg>
+              </button>
+              <input type="number" value="1" min="0" aria-label="Quantity" class="kal-qty-cart__input" readonly />
+              <button type="button" class="kal-qty-cart__plus" aria-label="Add one">+</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="kal-pdp__util-row">
+          <div class="kal-pdp__util-block">
+            <h3 class="kal-pdp__util-title">
+              <svg class="kal-pdp-section__icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 4v12"/>
+                <path d="M6 12l6 6 6-6"/>
+                <path d="M4 21h16"/>
+              </svg>
+              <span>Downloads</span>
+              <span class="kal-pdp__util-title-spacer" aria-hidden="true"></span>
+            </h3>
+            <div class="kal-pdp__util-chips kal-pdp__util-chips--inline">
+              <a href="#" data-toast="Assembly PDF would download"><span class="ico">📄</span> Assembly</a>
+              <a href="#" data-toast="Spec sheet PDF would download"><span class="ico">📄</span> Spec Sheet</a>
+              <a href="#" data-toast="High-res media pack would download"><span class="ico">📄</span> Media</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="kal-pdp-accordions">
+          <details class="kal-pdp-section">
+            <summary><svg class="kal-pdp-section__icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="8" width="19" height="8" rx="0.75"/><path d="M6 8v3M9 8v4M12 8v3M15 8v4M18 8v3"/></svg> Measurements</summary>
+            <div class="kal-pdp-section__body">
+              <dl class="kal-attr-grid"><div class="kal-attr"><dt>Product Dimensions</dt><dd>23&quot; x 13&quot; x 13&quot;t</dd></div><div class="kal-attr"><dt>Additional</dt><dd>Opening: 7.75&quot; x 3.75&quot; x 5&quot;t</dd></div><div class="kal-attr"><dt>Product Weight (lb)</dt><dd>46.9</dd></div><div class="kal-attr"><dt>Master Case Qty</dt><dd>1 ea/Box</dd></div></dl>
+            </div>
+          </details>
+
+          <details class="kal-pdp-section">
+            <summary><svg class="kal-pdp-section__icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="1"/><rect x="9" y="2.5" width="6" height="3" rx="0.5"/><path d="M9 10h6M9 14h6M9 18h4"/></svg> Specifications</summary>
+            <div class="kal-pdp-section__body">
+              <dl class="kal-attr-grid"><div class="kal-attr"><dt>Assembly Required</dt><dd>No</dd></div><div class="kal-attr"><dt>Item Status</dt><dd>Active</dd></div><div class="kal-attr"><dt>Product Style</dt><dd>Modern</dd></div><div class="kal-attr"><dt>Product Category</dt><dd>Décor</dd></div><div class="kal-attr"><dt>Product Subcategory</dt><dd>Sculptural Planter</dd></div><div class="kal-attr"><dt>Product Class</dt><dd>Farm Animal</dd></div><div class="kal-attr"><dt>Product Function</dt><dd>Planter</dd></div><div class="kal-attr"><dt>Product Theme</dt><dd>Eclectic</dd></div><div class="kal-attr"><dt>Product Holiday</dt><dd>Easter</dd></div><div class="kal-attr"><dt>Country of Origin</dt><dd>CN</dd></div><div class="kal-attr"><dt>UPC Code</dt><dd>840559700163</dd></div><div class="kal-attr"><dt>Warranty</dt><dd>Wholesale replacement on defect</dd></div><div class="kal-attr"><dt>BOGO Eligible</dt><dd>No</dd></div><div class="kal-attr"><dt>In-House Design</dt><dd>No</dd></div><div class="kal-attr"><dt>Freight Only</dt><dd>No</dd></div><div class="kal-attr"><dt>KA Catalog</dt><dd>Fall/Winter 2026 (code 58)</dd></div><div class="kal-attr"><dt>KA Page#</dt><dd>349</dd></div></dl>
+            </div>
+          </details>
+
+          <details class="kal-pdp-section">
+            <summary><svg class="kal-pdp-section__icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="9.5" r="2.7"/><circle cx="15" cy="8.7" r="2.7"/><circle cx="12" cy="15.6" r="2.7"/></svg> Colors And Materials</summary>
+            <div class="kal-pdp-section__body">
+              <dl class="kal-attr-grid"><div class="kal-attr"><dt>Primary Material</dt><dd>Faux Concrete</dd></div><div class="kal-attr"><dt>Product Color</dt><dd>MULTI</dd></div><div class="kal-attr"><dt>Finish</dt><dd>Distressed</dd></div><div class="kal-attr"><dt>Construction</dt><dd></dd></div><div class="kal-attr"><dt>Care Instructions</dt><dd>Wipe clean with a lint free, dry cloth.</dd></div></dl>
+            </div>
+          </details>
+
+          <details class="kal-pdp-section">
+            <summary><svg class="kal-pdp-section__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8l9-4.5 9 4.5v9l-9 4.5-9-4.5V8z"/><path d="M3 8l9 4.5 9-4.5"/><path d="M12 12.5v8.7"/><path d="M7.5 5.5l9 4.5"/></svg> Packaging</summary>
+            <div class="kal-pdp-section__body">
+              <dl class="kal-attr-grid"><div class="kal-attr"><dt>Quantity per Box</dt><dd>1 ea/Box</dd></div><div class="kal-attr"><dt>Minimum Order Quantity</dt><dd>1</dd></div><div class="kal-attr"><dt>Increment of Order Qty</dt><dd>1</dd></div><div class="kal-attr"><dt>Total No. of Cartons</dt><dd>1</dd></div><div class="kal-attr"><dt>Carton 1 Dims (L × W × H)</dt><dd>26&quot; × 20&quot; × 18&quot;</dd></div><div class="kal-attr"><dt>Carton 1 Weight (lb)</dt><dd>48</dd></div><div class="kal-attr"><dt>Case Cube (CF/ft³)</dt><dd>5.42</dd></div><div class="kal-attr"><dt>Case Cube (CBM/m³)</dt><dd>0.153</dd></div></dl>
+            </div>
+          </details>
+        </div>
+      </div>
+    </div>
+
+    <!-- Explore Similar Looks -->
+    <section class="kal-similar" aria-labelledby="similar-title">
+      <h2 id="similar-title">Explore Similar Looks</h2>
+      <div class="kal-similar__grid">
+        
+        <article class="kal-similar__card">
+          <a href="#" class="kal-similar__media" aria-label="Set of 2 Ceramic Organic Fluted Vases">
+            <button type="button" class="kal-heart" aria-label="Save" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.6-9.5-9.1C.9 8.7 2.7 5 6.1 5c1.9 0 3.5 1 4.9 3 1.4-2 3-3 4.9-3 3.4 0 5.2 3.7 3.6 6.9C19 16.4 12 21 12 21z"/></svg></button>
+            <img class="is-primary" src="https://fileserver-g-p.sourcerer.tech/files/64ae8ae9-a1ce-4f99-8a52-0c0cef41e7cd" alt="Set of 2 Ceramic Organic Fluted Vases" loading="lazy" />
+          </a>
+          <div class="kal-similar__body">
+            <span class="kal-similar__cat">Vase</span>
+            <h3 class="kal-similar__name">Set of 2 Ceramic Organic Fluted Vases</h3>
+            <div class="kal-similar__price">
+              <span class="kal-guest-only kal-gated-price"><a href="#">Log in to see pricing</a></span>
+              <span class="kal-loggedin-only"><strong>$55.00</strong></span>
+            </div>
+            <div class="kal-similar__actions">
+              <button type="button" class="kal-btn kal-btn--sm" data-add-to-cart>
+                <span class="kal-guest-only">Log in to see pricing</span>
+                <span class="kal-loggedin-only">Add to Cart</span>
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <article class="kal-similar__card">
+          <a href="#" class="kal-similar__media" aria-label="Set of 3 Wire Wrapped Glass Bud Vases">
+            <button type="button" class="kal-heart" aria-label="Save" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.6-9.5-9.1C.9 8.7 2.7 5 6.1 5c1.9 0 3.5 1 4.9 3 1.4-2 3-3 4.9-3 3.4 0 5.2 3.7 3.6 6.9C19 16.4 12 21 12 21z"/></svg></button>
+            <img class="is-primary" src="https://fileserver-g-p.sourcerer.tech/files/42efe53e-b572-4429-9b2b-3df461204c62" alt="Set of 3 Wire Wrapped Glass Bud Vases" loading="lazy" />
+          </a>
+          <div class="kal-similar__body">
+            <span class="kal-similar__cat">Vase</span>
+            <h3 class="kal-similar__name">Set of 3 Wire Wrapped Glass Bud Vases</h3>
+            <div class="kal-similar__price">
+              <span class="kal-guest-only kal-gated-price"><a href="#">Log in to see pricing</a></span>
+              <span class="kal-loggedin-only"><strong>$62.00</strong></span>
+            </div>
+            <div class="kal-similar__actions">
+              <button type="button" class="kal-btn kal-btn--sm" data-add-to-cart>
+                <span class="kal-guest-only">Log in to see pricing</span>
+                <span class="kal-loggedin-only">Add to Cart</span>
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <article class="kal-similar__card">
+          <a href="#" class="kal-similar__media" aria-label="Natural Ceramic Urn with Tobacco Swirls">
+            <button type="button" class="kal-heart" aria-label="Save" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.6-9.5-9.1C.9 8.7 2.7 5 6.1 5c1.9 0 3.5 1 4.9 3 1.4-2 3-3 4.9-3 3.4 0 5.2 3.7 3.6 6.9C19 16.4 12 21 12 21z"/></svg></button>
+            <img class="is-primary" src="https://fileserver-g-p.sourcerer.tech/files/fefbe552-0bf6-4150-a585-309c0f988f2e" alt="Natural Ceramic Urn with Tobacco Swirls" loading="lazy" />
+          </a>
+          <div class="kal-similar__body">
+            <span class="kal-similar__cat">Vases + Urns</span>
+            <h3 class="kal-similar__name">Natural Ceramic Urn with Tobacco Swirls</h3>
+            <div class="kal-similar__price">
+              <span class="kal-guest-only kal-gated-price"><a href="#">Log in to see pricing</a></span>
+              <span class="kal-loggedin-only"><strong>$54.00</strong></span>
+            </div>
+            <div class="kal-similar__actions">
+              <button type="button" class="kal-btn kal-btn--sm" data-add-to-cart>
+                <span class="kal-guest-only">Log in to see pricing</span>
+                <span class="kal-loggedin-only">Add to Cart</span>
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <article class="kal-similar__card">
+          <a href="#" class="kal-similar__media" aria-label="Clear Glass Cylinder with Embossed Christmas Tree">
+            <button type="button" class="kal-heart" aria-label="Save" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.6-9.5-9.1C.9 8.7 2.7 5 6.1 5c1.9 0 3.5 1 4.9 3 1.4-2 3-3 4.9-3 3.4 0 5.2 3.7 3.6 6.9C19 16.4 12 21 12 21z"/></svg></button>
+            <img class="is-primary" src="https://fileserver-g-p.sourcerer.tech/files/aadf3f5a-3e37-41bd-9f7b-84e5d175bfcf" alt="Clear Glass Cylinder with Embossed Christmas Tree" loading="lazy" />
+          </a>
+          <div class="kal-similar__body">
+            <span class="kal-similar__cat">Vases + Urns</span>
+            <h3 class="kal-similar__name">Clear Glass Cylinder with Embossed Christmas Tree</h3>
+            <div class="kal-similar__price">
+              <span class="kal-guest-only kal-gated-price"><a href="#">Log in to see pricing</a></span>
+              <span class="kal-loggedin-only"><strong>$65.00</strong></span>
+            </div>
+            <div class="kal-similar__actions">
+              <button type="button" class="kal-btn kal-btn--sm" data-add-to-cart>
+                <span class="kal-guest-only">Log in to see pricing</span>
+                <span class="kal-loggedin-only">Add to Cart</span>
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <article class="kal-similar__card">
+          <a href="#" class="kal-similar__media" aria-label="Set of 2 Twisted Paper Vases with Ruffled Rims">
+            <button type="button" class="kal-heart" aria-label="Save" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.6-9.5-9.1C.9 8.7 2.7 5 6.1 5c1.9 0 3.5 1 4.9 3 1.4-2 3-3 4.9-3 3.4 0 5.2 3.7 3.6 6.9C19 16.4 12 21 12 21z"/></svg></button>
+            <img class="is-primary" src="https://fileserver-g-p.sourcerer.tech/files/a905120f-e2f9-4ddb-8286-166906c5b7fa" alt="Set of 2 Twisted Paper Vases with Ruffled Rims" loading="lazy" />
+            <img class="is-hover" src="https://ultronapi-g-p.sourcerer.tech/artifact/v1/file/5a05a941-f88f-4f79-8bac-a5fd1efcf4bf" alt="" loading="lazy" />
+          </a>
+          <div class="kal-similar__body">
+            <span class="kal-similar__cat">Vase</span>
+            <h3 class="kal-similar__name">Set of 2 Twisted Paper Vases with Ruffled Rims</h3>
+            <div class="kal-similar__price">
+              <span class="kal-guest-only kal-gated-price"><a href="#">Log in to see pricing</a></span>
+              <span class="kal-loggedin-only"><strong>$17.00</strong></span>
+            </div>
+            <div class="kal-similar__actions">
+              <button type="button" class="kal-btn kal-btn--sm" data-add-to-cart>
+                <span class="kal-guest-only">Log in to see pricing</span>
+                <span class="kal-loggedin-only">Add to Cart</span>
+              </button>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Frequently Bought Together -->
+    <section class="kal-similar kal-fbt" aria-labelledby="fbt-title">
+      <div class="kal-fbt__head">
+        <h2 id="fbt-title">Frequently Bought Together</h2>
+        <span class="kal-fbt__badge">Powered by WizCommerce AI</span>
+      </div>
+      <div class="kal-similar__grid">
+        
+        <article class="kal-similar__card">
+          <a href="#" class="kal-similar__media" aria-label="Set of 3 Strawberry, Orange and Lemon Ceramic Bud Vases">
+            <button type="button" class="kal-heart" aria-label="Save" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.6-9.5-9.1C.9 8.7 2.7 5 6.1 5c1.9 0 3.5 1 4.9 3 1.4-2 3-3 4.9-3 3.4 0 5.2 3.7 3.6 6.9C19 16.4 12 21 12 21z"/></svg></button>
+            <img class="is-primary" src="https://fileserver-g-p.sourcerer.tech/files/b7047ee7-410e-4500-9a20-b9c50786a73f" alt="Set of 3 Strawberry, Orange and Lemon Ceramic Bud Vases" loading="lazy" />
+          </a>
+          <div class="kal-similar__body">
+            <span class="kal-similar__cat">Sculptural Vase</span>
+            <h3 class="kal-similar__name">Set of 3 Strawberry, Orange and Lemon Ceramic Bud Vases</h3>
+            <div class="kal-similar__price">
+              <span class="kal-guest-only kal-gated-price"><a href="#">Log in to see pricing</a></span>
+              <span class="kal-loggedin-only"><strong>$33.00</strong></span>
+            </div>
+            <div class="kal-similar__actions">
+              <button type="button" class="kal-btn kal-btn--sm" data-add-to-cart>
+                <span class="kal-guest-only">Log in to see pricing</span>
+                <span class="kal-loggedin-only">Add to Cart</span>
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <article class="kal-similar__card">
+          <a href="#" class="kal-similar__media" aria-label="Set of 3 Rustic Iron Angel Tealight Holders">
+            <button type="button" class="kal-heart" aria-label="Save" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.6-9.5-9.1C.9 8.7 2.7 5 6.1 5c1.9 0 3.5 1 4.9 3 1.4-2 3-3 4.9-3 3.4 0 5.2 3.7 3.6 6.9C19 16.4 12 21 12 21z"/></svg></button>
+            <img class="is-primary" src="https://fileserver-g-p.sourcerer.tech/files/ad108534-3d74-4be3-9f5f-47347d484f26" alt="Set of 3 Rustic Iron Angel Tealight Holders" loading="lazy" />
+          </a>
+          <div class="kal-similar__body">
+            <span class="kal-similar__cat">Candleholder</span>
+            <h3 class="kal-similar__name">Set of 3 Rustic Iron Angel Tealight Holders</h3>
+            <div class="kal-similar__price">
+              <span class="kal-guest-only kal-gated-price"><a href="#">Log in to see pricing</a></span>
+              <span class="kal-loggedin-only"><strong>$31.00</strong></span>
+            </div>
+            <div class="kal-similar__actions">
+              <button type="button" class="kal-btn kal-btn--sm" data-add-to-cart>
+                <span class="kal-guest-only">Log in to see pricing</span>
+                <span class="kal-loggedin-only">Add to Cart</span>
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <article class="kal-similar__card">
+          <a href="#" class="kal-similar__media" aria-label="Set of 3 Cast Iron Taper Candle Holders with Ring Detail">
+            <button type="button" class="kal-heart" aria-label="Save" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.6-9.5-9.1C.9 8.7 2.7 5 6.1 5c1.9 0 3.5 1 4.9 3 1.4-2 3-3 4.9-3 3.4 0 5.2 3.7 3.6 6.9C19 16.4 12 21 12 21z"/></svg></button>
+            <img class="is-primary" src="https://fileserver-g-p.sourcerer.tech/files/f97d0e10-bd53-43c2-b0cb-12d7d12f09fa" alt="Set of 3 Cast Iron Taper Candle Holders with Ring Detail" loading="lazy" />
+          </a>
+          <div class="kal-similar__body">
+            <span class="kal-similar__cat">Candleholder</span>
+            <h3 class="kal-similar__name">Set of 3 Cast Iron Taper Candle Holders with Ring Detail</h3>
+            <div class="kal-similar__price">
+              <span class="kal-guest-only kal-gated-price"><a href="#">Log in to see pricing</a></span>
+              <span class="kal-loggedin-only"><strong>$56.00</strong></span>
+            </div>
+            <div class="kal-similar__actions">
+              <button type="button" class="kal-btn kal-btn--sm" data-add-to-cart>
+                <span class="kal-guest-only">Log in to see pricing</span>
+                <span class="kal-loggedin-only">Add to Cart</span>
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <article class="kal-similar__card">
+          <a href="#" class="kal-similar__media" aria-label="Ceramic Bull Terrier Planter">
+            <button type="button" class="kal-heart" aria-label="Save" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.6-9.5-9.1C.9 8.7 2.7 5 6.1 5c1.9 0 3.5 1 4.9 3 1.4-2 3-3 4.9-3 3.4 0 5.2 3.7 3.6 6.9C19 16.4 12 21 12 21z"/></svg></button>
+            <img class="is-primary" src="https://fileserver-g-p.sourcerer.tech/files/370a9656-02e6-4634-9f01-d1e30ec9b237" alt="Ceramic Bull Terrier Planter" loading="lazy" />
+            <img class="is-hover" src="https://ultronapi-g-p.sourcerer.tech/artifact/v1/file/b7b54a6c-e47d-4ebb-80f7-67af46cf46f3" alt="" loading="lazy" />
+          </a>
+          <div class="kal-similar__body">
+            <span class="kal-similar__cat">Sculptural Planter</span>
+            <h3 class="kal-similar__name">Ceramic Bull Terrier Planter</h3>
+            <div class="kal-similar__price">
+              <span class="kal-guest-only kal-gated-price"><a href="#">Log in to see pricing</a></span>
+              <span class="kal-loggedin-only"><strong>$63.00</strong></span>
+            </div>
+            <div class="kal-similar__actions">
+              <button type="button" class="kal-btn kal-btn--sm" data-add-to-cart>
+                <span class="kal-guest-only">Log in to see pricing</span>
+                <span class="kal-loggedin-only">Add to Cart</span>
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <article class="kal-similar__card">
+          <a href="#" class="kal-similar__media" aria-label="Large Glass Bubble Vase / Amber">
+            <button type="button" class="kal-heart" aria-label="Save" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.6-9.5-9.1C.9 8.7 2.7 5 6.1 5c1.9 0 3.5 1 4.9 3 1.4-2 3-3 4.9-3 3.4 0 5.2 3.7 3.6 6.9C19 16.4 12 21 12 21z"/></svg></button>
+            <img class="is-primary" src="https://fileserver-g-p.sourcerer.tech/files/b3b796c1-ba48-40b9-b87e-44f781f8bba1" alt="Large Glass Bubble Vase / Amber" loading="lazy" />
+          </a>
+          <div class="kal-similar__body">
+            <span class="kal-similar__cat">Vase</span>
+            <h3 class="kal-similar__name">Large Glass Bubble Vase / Amber</h3>
+            <div class="kal-similar__price">
+              <span class="kal-guest-only kal-gated-price"><a href="#">Log in to see pricing</a></span>
+              <span class="kal-loggedin-only"><strong>$56.00</strong></span>
+            </div>
+            <div class="kal-similar__actions">
+              <button type="button" class="kal-btn kal-btn--sm" data-add-to-cart>
+                <span class="kal-guest-only">Log in to see pricing</span>
+                <span class="kal-loggedin-only">Add to Cart</span>
+              </button>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+  </div>
+</div><!-- /pdp view -->
+
+</main>
+
+<!-- ============================================================
+     FOOTER (shared)
+     ============================================================ -->
+<footer class="kal-footer" role="contentinfo">
+  <div class="kal-container">
+    <div class="kal-footer__cols">
+      <div class="kal-footer__col">
+        <h4>About</h4>
+        <ul>
+          <li><a href="#">Our Story</a></li>
+          <li><a href="#">Doug &amp; Susan's Kids Foundation</a></li>
+          <li><a href="#">Employee Profit Share Tax Credit</a></li>
+          <li><a href="#">Meet the Team</a></li>
+          <li><a href="#">Blog</a></li>
+        </ul>
+      </div>
+      <div class="kal-footer__col">
+        <h4>Catalog</h4>
+        <ul>
+          <li><a href="#">Showroom Tour</a></li>
+          <li><a href="#">Wholesale Catalog Request</a></li>
+          <li><a href="#">View Catalog Online</a></li>
+          <li><a href="#">Download Table of Contents</a></li>
+        </ul>
+      </div>
+      <div class="kal-footer__col">
+        <h4>Sales</h4>
+        <ul>
+          <li><a href="#">Market Schedule</a></li>
+          <li><a href="#">Orders &amp; Shipping</a></li>
+          <li><a href="#">Loyalty Program</a></li>
+          <li><a href="#">Pay an Invoice</a></li>
+          <li><a href="#">Search All / In-stock</a></li>
+        </ul>
+      </div>
+      <div class="kal-footer__col">
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="#">Apply for a Wholesale Account</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Contact Us</a></li>
+        </ul>
+      </div>
+      <div class="kal-footer__col">
+        <h4>Follow</h4>
+        <ul>
+          <li><a href="#">Facebook</a></li>
+          <li><a href="#">Pinterest</a></li>
+          <li><a href="#">Instagram</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="kal-footer__meta-row">
+      <div class="kal-footer__contact">
+        <span>(800) 249-4229</span>·
+        <span>sales@kalalou.com</span>·
+        <span>3844 W Northside Dr, Jackson, MS 39209</span>
+      </div>
+      <div class="kal-trust">
+        <span class="kal-trust__stars" aria-hidden="true">★ ★ ★ ★ ★</span>
+        <strong>4.8</strong> average from <strong>612</strong> wholesale buyers · <a href="#">Read reviews</a>
+      </div>
+    </div>
+    <div class="kal-footer__legal">
+      <a href="#">Privacy Policy</a> | <a href="#">Accessibility Statement</a> | <a href="#">Terms of Service</a> &nbsp;·&nbsp; © 2026 Kalalou, Inc.
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ============================================================
+   Prototype JS — kept intentionally small.
+   Anything customer-facing is delegated to CSS wherever possible.
+   ============================================================ */
+
+// 0. Mobile hamburger — toggles the nav drawer.
+(function () {
+  var burger = document.querySelector('.kal-hamburger');
+  var nav = document.getElementById('kal-primary-nav');
+  if (!burger || !nav) return;
+  burger.addEventListener('click', function () {
+    var open = burger.getAttribute('aria-expanded') === 'true';
+    burger.setAttribute('aria-expanded', open ? 'false' : 'true');
+    nav.classList.toggle('is-open', !open);
+  });
+})();
+
+// 1. View switcher (Home / PLP / PDP) + Login-state switcher (Guest / Logged-in)
+(function () {
+  var toggle = document.querySelector('.kal-proto-toggle');
+  if (!toggle) return;
+  var buttons = toggle.querySelectorAll('button[data-view]');
+  var views = document.querySelectorAll('.kal-view');
+  buttons.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var target = btn.getAttribute('data-view');
+      buttons.forEach(function (b) { b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'); });
+      views.forEach(function (v) {
+        v.classList.toggle('is-active', v.getAttribute('data-view') === target);
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+
+  // Login state — Guest (pre-login) vs Logged in (post-login)
+  var stateButtons = toggle.querySelectorAll('button[data-state]');
+  function setLoginState(state) {
+    document.body.classList.toggle('is-guest',    state === 'guest');
+    document.body.classList.toggle('is-loggedin', state === 'loggedin');
+    stateButtons.forEach(function (b) {
+      b.setAttribute('aria-pressed', b.getAttribute('data-state') === state ? 'true' : 'false');
+    });
+    // Cart count follows state (guest = 0, logged-in = 2 pre-loaded).
+    document.querySelectorAll('.kal-cart__count').forEach(function (el) {
+      el.textContent = state === 'guest' ? '0' : '2';
+    });
+  }
+  stateButtons.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      setLoginState(btn.getAttribute('data-state'));
+    });
+  });
+  // Expose so global router can intercept.
+  window.kalIsGuest = function () { return document.body.classList.contains('is-guest'); };
+})();
+
+// 2. Mega menu — click / keyboard toggle (hover already handled in CSS).
+//    Ensures ARIA state stays honest for keyboard + screen-reader users.
+(function () {
+  var buttons = document.querySelectorAll('.kal-nav__link[data-mega]');
+  buttons.forEach(function (btn) {
+    btn.addEventListener('click', function (e) {
+      e.preventDefault();
+      var expanded = btn.getAttribute('aria-expanded') === 'true';
+      // Close others
+      buttons.forEach(function (b) {
+        b.setAttribute('aria-expanded', 'false');
+        var m = document.getElementById(b.getAttribute('data-mega'));
+        if (m) m.classList.remove('is-open');
+      });
+      if (!expanded) {
+        btn.setAttribute('aria-expanded', 'true');
+        var mega = document.getElementById(btn.getAttribute('data-mega'));
+        if (mega) mega.classList.add('is-open');
+      }
+    });
+  });
+  // Close on Escape
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      buttons.forEach(function (b) { b.setAttribute('aria-expanded', 'false'); });
+      document.querySelectorAll('.kal-mega.is-open').forEach(function (m) { m.classList.remove('is-open'); });
+    }
+  });
+  // Click outside to close
+  document.addEventListener('click', function (e) {
+    if (!e.target.closest('.kal-nav')) {
+      buttons.forEach(function (b) { b.setAttribute('aria-expanded', 'false'); });
+      document.querySelectorAll('.kal-mega.is-open').forEach(function (m) { m.classList.remove('is-open'); });
+    }
+  });
+})();
+
+// 3. Facet dropdowns
+(function () {
+  var toggles = document.querySelectorAll('.kal-facet__toggle');
+  toggles.forEach(function (t) {
+    t.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var panel = document.getElementById(t.getAttribute('data-facet'));
+      if (!panel) return;
+      var open = panel.classList.contains('is-open');
+      // Close all others
+      document.querySelectorAll('.kal-facet__panel.is-open').forEach(function (p) { p.classList.remove('is-open'); });
+      document.querySelectorAll('.kal-facet__toggle').forEach(function (o) { o.setAttribute('aria-expanded', 'false'); });
+      if (!open) {
+        panel.classList.add('is-open');
+        t.setAttribute('aria-expanded', 'true');
+      }
+    });
+  });
+  document.addEventListener('click', function (e) {
+    if (!e.target.closest('.kal-facet')) {
+      document.querySelectorAll('.kal-facet__panel.is-open').forEach(function (p) { p.classList.remove('is-open'); });
+      document.querySelectorAll('.kal-facet__toggle').forEach(function (o) { o.setAttribute('aria-expanded', 'false'); });
+    }
+  });
+})();
+
+// 4. In-Stock toggle switch
+(function () {
+  var sw = document.querySelector('.kal-switch');
+  if (!sw) return;
+  sw.addEventListener('click', function () {
+    var on = sw.getAttribute('aria-pressed') === 'true';
+    sw.setAttribute('aria-pressed', on ? 'false' : 'true');
+  });
+})();
+
+// 5. Active-filter chip removal (prototype demo)
+(function () {
+  document.querySelectorAll('.kal-chip button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var chip = b.closest('.kal-chip');
+      if (chip) chip.remove();
+    });
+  });
+})();
+
+// 6. PDP gallery — swap main image on thumb click
+(function () {
+  var main = document.getElementById('kal-pdp-main-img');
+  var thumbs = document.querySelectorAll('.kal-pdp__thumb-tile');
+  if (!main || !thumbs.length) return;
+  thumbs.forEach(function (t) {
+    t.addEventListener('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      var src = t.getAttribute('data-src');
+      if (src) main.src = src;
+      thumbs.forEach(function (o) {
+        o.classList.remove('is-active');
+        o.setAttribute('aria-selected', 'false');
+      });
+      t.classList.add('is-active');
+      t.setAttribute('aria-selected', 'true');
+    });
+  });
+})();
+
+// 7. Variant swatches
+(function () {
+  var group = document.querySelector('.kal-variants__swatches');
+  if (!group) return;
+  var swatches = group.querySelectorAll('.kal-swatch');
+  swatches.forEach(function (s) {
+    s.addEventListener('click', function () {
+      swatches.forEach(function (o) {
+        o.classList.remove('is-selected');
+        o.setAttribute('aria-pressed', 'false');
+      });
+      s.classList.add('is-selected');
+      s.setAttribute('aria-pressed', 'true');
+    });
+  });
+})();
+
+// 8. Quantity stepper
+(function () {
+  document.querySelectorAll('.kal-qty').forEach(function (q) {
+    var input = q.querySelector('input');
+    var buttons = q.querySelectorAll('button');
+    buttons[0].addEventListener('click', function () {
+      input.value = Math.max(1, (parseInt(input.value, 10) || 1) - 1);
+    });
+    buttons[1].addEventListener('click', function () {
+      input.value = (parseInt(input.value, 10) || 1) + 1;
+    });
+  });
+})();
+
+
+/* ============================================================
+   Global click router + toast + modal + drawer + facet filter.
+   Everything below runs after the existing per-widget wiring
+   so it doesn't stomp on the small handlers above.
+   ============================================================ */
+(function () {
+  // ---------- Utilities ----------
+  var backdrop = document.querySelector('.kal-backdrop');
+  var toastHost = document.querySelector('.kal-toast-container');
+  var lastOpen = null;
+
+  function toast(msg, kind) {
+    kind = kind || 'info';
+    var el = document.createElement('div');
+    el.className = 'kal-toast kal-toast--' + kind;
+    el.textContent = msg;
+    var closer = document.createElement('a');
+    closer.href = '#'; closer.textContent = 'Dismiss';
+    closer.addEventListener('click', function (e) { e.preventDefault(); el.classList.add('is-leaving'); setTimeout(function () { el.remove(); }, 200); });
+    el.appendChild(closer);
+    toastHost.appendChild(el);
+    setTimeout(function () {
+      el.classList.add('is-leaving');
+      setTimeout(function () { el.remove(); }, 220);
+    }, 3200);
+  }
+
+  function openOverlay(el) {
+    if (!el) return;
+    el.hidden = false;
+    // force reflow so transition kicks in
+    void el.offsetHeight;
+    el.classList.add('is-open');
+    backdrop.hidden = false;
+    void backdrop.offsetHeight;
+    backdrop.classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+    lastOpen = el;
+    // focus first focusable
+    var f = el.querySelector('input,select,textarea,button:not([data-close])');
+    if (f) setTimeout(function () { f.focus(); }, 100);
+  }
+  function closeOverlay(el) {
+    el = el || lastOpen;
+    if (!el) return;
+    el.classList.remove('is-open');
+    setTimeout(function () { el.hidden = true; }, 220);
+    // if no other overlays open, hide backdrop
+    var anyOpen = document.querySelector('.kal-modal.is-open, .kal-drawer.is-open');
+    if (!anyOpen) {
+      backdrop.classList.remove('is-open');
+      setTimeout(function () { backdrop.hidden = true; }, 220);
+      document.body.style.overflow = '';
+    }
+    lastOpen = null;
+  }
+  function openById(id) { openOverlay(document.getElementById(id)); }
+
+  // ---------- Cart state ----------
+  var cart = {
+    everyday: [
+      { sku: 'CDV2264K', name: 'Ceramic Bull Terrier Planter', qty: 2, box: '2 ea/Box', img: 'https://fileserver-g-p.sourcerer.tech/files/370a9656-02e6-4634-9f01-d1e30ec9b237', price: 24.00 },
+      { sku: 'CHAU1000K', name: 'Set of 2 Twisted Paper Vases',  qty: 1, box: '1 set/Box', img: 'https://fileserver-g-p.sourcerer.tech/files/6866e58b-9d16-4e0c-a67b-6fc99adfdd9e', price: 42.00 }
+    ],
+    holiday: [
+      { sku: 'CV2336', name: 'Clear Glass Cylinder with Embossed Christmas Tree', qty: 1, box: '1 ea/Box', img: 'https://www.kalalou.com/Images/assets/KAL/FW26_Banners3.jpg', price: 18.00 }
+    ],
+    wishlist: []
+  };
+  var currentTab = 'everyday';
+
+  function money(n) { return '$' + n.toFixed(2); }
+
+  function renderDrawer() {
+    var body = document.querySelector('[data-drawer-body]');
+    if (!body) return;
+    var lines = cart[currentTab] || [];
+    if (!lines.length) {
+      body.innerHTML = '<p style="text-align:center; color:var(--kal-accent); font-size:13px; padding: 32px 0;">This ' + (currentTab === 'wishlist' ? 'wishlist' : 'cart') + ' is empty.</p>';
+    } else {
+      body.innerHTML = lines.map(function (l, idx) {
+        return '<div class="kal-drawer__cart-line">' +
+          '<img src="' + l.img + '" alt="">' +
+          '<div><strong>' + l.name + '</strong>' +
+          '<small>SKU · ' + l.sku + ' · ' + l.box + ' · qty ' + l.qty + '</small>' +
+          '<small>' + money(l.price * l.qty) + '</small></div>' +
+          '<button data-remove="' + currentTab + ':' + idx + '" aria-label="Remove">×</button>' +
+        '</div>';
+      }).join('');
+    }
+    var sub = lines.reduce(function (s, l) { return s + l.price * l.qty; }, 0);
+    var disc = currentTab === 'everyday' && sub > 40 ? sub * 0.10 : 0;
+    var grand = Math.max(0, sub - disc);
+    var sum = document.querySelector('[data-drawer-summary]');
+    if (sum) {
+      sum.innerHTML =
+        '<div class="kal-drawer__row"><span>Subtotal</span><span>' + money(sub) + '</span></div>' +
+        '<div class="kal-drawer__row kal-drawer__row--discount"><span>Discounts (loyalty)</span><span>−' + money(disc) + '</span></div>' +
+        '<div class="kal-drawer__row"><span>Shipping</span><span>Free (in-stock only)</span></div>' +
+        '<div class="kal-drawer__row kal-drawer__row--total"><span>Grand total</span><span>' + money(grand) + '</span></div>';
+    }
+    // header count
+    var count = cart.everyday.length + cart.holiday.length;
+    document.querySelectorAll('.kal-cart__count').forEach(function (el) { el.textContent = String(count); });
+    var wc = document.querySelector('[data-wishlist-count]');
+    if (wc) wc.textContent = String(cart.wishlist.length);
+  }
+
+  function switchTab(tab) {
+    currentTab = tab;
+    document.querySelectorAll('.kal-drawer__tab').forEach(function (t) {
+      var active = t.getAttribute('data-tab') === tab;
+      t.classList.toggle('is-active', active);
+      t.setAttribute('aria-selected', active ? 'true' : 'false');
+    });
+    renderDrawer();
+  }
+
+  // ---------- Wishlist heart injection ----------
+  function ensureHeartsOnCards() {
+    document.querySelectorAll('.kal-product-card__media').forEach(function (m) {
+      if (m.querySelector('.kal-heart')) return;
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'kal-heart';
+      b.setAttribute('aria-label', 'Save to wishlist');
+      b.setAttribute('aria-pressed', 'false');
+      b.innerHTML = '<svg viewBox="0 0 24 24"><path d="M12 21s-7-4.6-9.5-9.1C.9 8.7 2.7 5 6.1 5c1.9 0 3.5 1 4.9 3 1.4-2 3-3 4.9-3 3.4 0 5.2 3.7 3.6 6.9C19 16.4 12 21 12 21z"/></svg>';
+      m.appendChild(b);
+    });
+    // Also patch any empty hearts inside similar/fbt cards.
+    document.querySelectorAll('.kal-similar__media .kal-heart').forEach(function (h) {
+      if (!h.querySelector('svg')) {
+        h.innerHTML = '<svg viewBox="0 0 24 24"><path d="M12 21s-7-4.6-9.5-9.1C.9 8.7 2.7 5 6.1 5c1.9 0 3.5 1 4.9 3 1.4-2 3-3 4.9-3 3.4 0 5.2 3.7 3.6 6.9C19 16.4 12 21 12 21z"/></svg>';
+        h.setAttribute('aria-pressed', h.getAttribute('aria-pressed') || 'false');
+      }
+    });
+  }
+
+  // ---------- Facet filter + sort ----------
+  function collectFilters() {
+    var active = [];
+    document.querySelectorAll('.kal-facet__panel input:checked').forEach(function (i) {
+      var label = i.parentElement ? i.parentElement.textContent.trim() : '';
+      if (label) active.push(label);
+    });
+    var inStockOnly = document.querySelector('.kal-switch') && document.querySelector('.kal-switch').getAttribute('aria-pressed') === 'true';
+    return { labels: active, inStockOnly: inStockOnly };
+  }
+
+  function applyFilters() {
+    var f = collectFilters();
+    var cards = document.querySelectorAll('.kal-view[data-view="plp"] .kal-product-card, .kal-view[data-view="plp"] .kal-promo-tile');
+    var shown = 0;
+    cards.forEach(function (c) {
+      var text = c.textContent.toLowerCase();
+      var visible = true;
+      if (f.inStockOnly) {
+        // hide preorder cards
+        if (c.querySelector && c.querySelector('.kal-badge') && /preorder/i.test(c.textContent)) visible = false;
+      }
+      // Any filter label must appear in card text (loose match — good enough for a proto)
+      f.labels.forEach(function (l) {
+        if (!text.includes(l.toLowerCase())) visible = false;
+      });
+      c.style.display = visible ? '' : 'none';
+      if (visible && c.classList.contains('kal-product-card')) shown++;
+    });
+    // update count
+    var countEl = document.querySelector('.kal-plp-title__count');
+    if (countEl) countEl.textContent = shown + ' product' + (shown === 1 ? '' : 's') + ' shown';
+    // update chips
+    renderActiveChips(f.labels, f.inStockOnly);
+  }
+
+  function renderActiveChips(labels, inStockOnly) {
+    var host = document.querySelector('.kal-active-filters');
+    if (!host) return;
+    var pieces = [];
+    if (inStockOnly) pieces.push({ label: 'In Stock only', key: '__instock' });
+    labels.forEach(function (l) { pieces.push({ label: l, key: l }); });
+    host.innerHTML = pieces.map(function (p) {
+      return '<span class="kal-chip">' + p.label + ' <button aria-label="Remove filter" data-chip="' + p.key + '">×</button></span>';
+    }).join('');
+  }
+
+  function applySort() {
+    var sel = document.getElementById('kal-sort-select');
+    if (!sel) return;
+    var grid = document.querySelector('.kal-view[data-view="plp"] .kal-products');
+    if (!grid) return;
+    var cards = Array.prototype.slice.call(grid.children);
+    var mode = sel.value;
+    cards.sort(function (a, b) {
+      // Promo tile stays first
+      if (a.classList.contains('kal-promo-tile')) return -1;
+      if (b.classList.contains('kal-promo-tile')) return 1;
+      var an = (a.querySelector('.kal-product-card__name') || {}).textContent || '';
+      var bn = (b.querySelector('.kal-product-card__name') || {}).textContent || '';
+      var asku = (a.querySelector('.kal-product-card__sku') || {}).textContent || '';
+      var bsku = (b.querySelector('.kal-product-card__sku') || {}).textContent || '';
+      if (mode.indexOf('A to Z') >= 0) return an.localeCompare(bn);
+      if (mode.indexOf('New') >= 0) {
+        var an2 = /New/i.test(a.textContent) ? 0 : 1;
+        var bn2 = /New/i.test(b.textContent) ? 0 : 1;
+        return an2 - bn2;
+      }
+      if (mode.indexOf('Best') >= 0) {
+        // Fake best-sellers: those with BOGO badge first
+        var ab = /BOGO/i.test(a.textContent) ? 0 : 1;
+        var bb = /BOGO/i.test(b.textContent) ? 0 : 1;
+        return ab - bb;
+      }
+      // price low to high / high to low — fallback to SKU
+      var cmp = asku.localeCompare(bsku);
+      return mode.indexOf('high to low') >= 0 ? -cmp : cmp;
+    });
+    cards.forEach(function (c) { grid.appendChild(c); });
+    toast('Sorted by: ' + mode, 'info');
+  }
+
+  // ---------- Global click router ----------
+  document.addEventListener('click', function (e) {
+    var el = e.target;
+
+    // Close on backdrop
+    if (el.classList && el.classList.contains('kal-backdrop')) {
+      document.querySelectorAll('.kal-modal.is-open, .kal-drawer.is-open').forEach(closeOverlay);
+      return;
+    }
+
+    // Close buttons within modal/drawer
+    var closer = el.closest && el.closest('[data-close]');
+    if (closer) {
+      e.preventDefault();
+      var host = closer.closest('.kal-modal, .kal-drawer');
+      closeOverlay(host);
+      return;
+    }
+
+    // Explicit open-by-id
+    var opener = el.closest && el.closest('[data-open]');
+    if (opener) {
+      e.preventDefault();
+      var openId = opener.getAttribute('data-open');
+      if (openId === 'plp-from-search') {
+        // switch to PLP view
+        document.querySelector('.kal-proto-toggle button[data-view="plp"]').click();
+        closeOverlay(document.getElementById('modal-search'));
+        return;
+      }
+      openById(opener.getAttribute('data-open'));
+      if (opener.hasAttribute('data-close-after')) {
+        var host2 = opener.closest('.kal-modal, .kal-drawer');
+        if (host2) closeOverlay(host2);
+      }
+      return;
+    }
+
+    // Toast triggers
+    var toastEl = el.closest && el.closest('[data-toast]');
+    if (toastEl) {
+      e.preventDefault();
+      toast(toastEl.getAttribute('data-toast'), toastEl.getAttribute('data-toast-kind') || 'ok');
+      if (toastEl.hasAttribute('data-close-after')) {
+        var host3 = toastEl.closest('.kal-modal, .kal-drawer');
+        if (host3) closeOverlay(host3);
+      }
+      return;
+    }
+
+    // Wishlist heart
+    var heart = el.closest && el.closest('.kal-heart');
+    if (heart) {
+      e.preventDefault();
+      var on = heart.classList.toggle('is-active');
+      heart.setAttribute('aria-pressed', on ? 'true' : 'false');
+      var card = heart.closest('.kal-product-card');
+      if (card) {
+        var sku = (card.querySelector('.kal-product-card__sku') || {}).textContent || '';
+        var name = (card.querySelector('.kal-product-card__name') || {}).textContent || 'Item';
+        if (on) {
+          cart.wishlist.push({ sku: sku.replace(/^.*·\s*/, ''), name: name, qty: 1, box: '', img: (card.querySelector('img') || {}).src || '', price: 0 });
+          toast(name + ' saved to wishlist', 'ok');
+        } else {
+          cart.wishlist = cart.wishlist.filter(function (x) { return x.name !== name; });
+          toast(name + ' removed from wishlist', 'info');
+        }
+        renderDrawer();
+      }
+      return;
+    }
+
+    // Drawer tabs
+    if (el.matches && el.matches('.kal-drawer__tab')) {
+      switchTab(el.getAttribute('data-tab'));
+      return;
+    }
+    // Drawer remove item
+    var rm = el.closest && el.closest('[data-remove]');
+    if (rm) {
+      var parts = rm.getAttribute('data-remove').split(':');
+      var tab = parts[0], idx = parseInt(parts[1], 10);
+      var removed = cart[tab].splice(idx, 1)[0];
+      toast('Removed: ' + (removed && removed.name), 'info');
+      renderDrawer();
+      return;
+    }
+
+    // Facet chip removal
+    var chipBtn = el.closest && el.closest('.kal-chip button');
+    if (chipBtn) {
+      e.preventDefault();
+      var key = chipBtn.getAttribute('data-chip');
+      if (key === '__instock') {
+        var sw = document.querySelector('.kal-switch');
+        if (sw) sw.setAttribute('aria-pressed', 'false');
+      } else if (key) {
+        document.querySelectorAll('.kal-facet__panel input:checked').forEach(function (i) {
+          var label = i.parentElement ? i.parentElement.textContent.trim() : '';
+          if (label === key) i.checked = false;
+        });
+      }
+      applyFilters();
+      return;
+    }
+
+    // Facet checkbox change
+    if (el.matches && el.matches('.kal-facet__panel input')) {
+      applyFilters();
+      return;
+    }
+
+    // Add to Cart / Preorder button on product cards (PLP + Similar + FBT)
+    var actionBtn = el.closest && el.closest('[data-add-to-cart]');
+    if (actionBtn && !actionBtn.closest('.kal-qty-cart')) {
+      e.preventDefault();
+      var card2 = actionBtn.closest('.kal-product-card, .kal-similar__card');
+      var isPreorder = /Preorder/i.test(actionBtn.textContent);
+      var nameEl = card2.querySelector('.kal-product-card__name, .kal-similar__name');
+      var name2 = (nameEl && nameEl.textContent) || 'Item';
+      var skuEl = card2.querySelector('.kal-product-card__sku');
+      var sku2 = ((skuEl && skuEl.textContent) || '').replace(/^.*·\s*/, '') || 'SKU';
+      var img2 = (card2.querySelector('img') || {}).src || '';
+
+      // Guest state: sign-in required for any cart action.
+      if (document.body.classList.contains('is-guest')) {
+        toast('Sign in to see pricing and add to cart', 'info');
+        openById('modal-signin');
+        return;
+      }
+
+      if (isPreorder) {
+        var t = document.querySelector('#modal-preorder [data-target="preorder-name"]');
+        if (t) t.textContent = name2;
+        openById('modal-preorder');
+        return;
+      }
+      cart.everyday.push({ sku: sku2, name: name2, qty: 1, box: '', img: img2, price: 22 });
+      renderDrawer();
+      toast(name2 + ' added to Everyday cart', 'ok');
+      return;
+    }
+
+    // Product media click → open PDP view (prototype behavior)
+    var media = el.closest && el.closest('.kal-product-card__media, .kal-recs .kal-product-card');
+    if (media) {
+      e.preventDefault();
+      var target = document.querySelector('.kal-proto-toggle button[data-view="pdp"]');
+      if (target) target.click();
+      toast('Opening PDP…', 'info');
+      return;
+    }
+
+    // Category tile click → PLP
+    if (el.closest && el.closest('.kal-cat')) {
+      e.preventDefault();
+      var tp = document.querySelector('.kal-proto-toggle button[data-view="plp"]');
+      if (tp) tp.click();
+      var label = ((el.closest('.kal-cat').querySelector('.kal-cat__label') || {}).textContent) || 'Category';
+      toast('Filtered to: ' + label, 'info');
+      return;
+    }
+
+    // Promo tile in PLP → treat as category jump
+    if (el.closest && el.closest('.kal-promo-tile')) {
+      e.preventDefault();
+      var tp2 = document.querySelector('.kal-proto-toggle button[data-view="plp"]');
+      if (tp2) tp2.click();
+      toast('Opening: New Textiles collection', 'info');
+      return;
+    }
+
+    // Market schedule tile
+    if (el.closest && el.closest('.kal-market')) {
+      e.preventDefault();
+      var m = el.closest('.kal-market');
+      var mn = (m.querySelector('.kal-market__name') || {}).textContent || 'Market';
+      toast('Market page for: ' + mn, 'info');
+      return;
+    }
+
+    // Mid banner / collection banner
+    if (el.closest && el.closest('.kal-midbanner')) { e.preventDefault(); toast('Opening: Our Story', 'info'); return; }
+    if (el.closest && el.closest('.kal-collectionbanner')) { e.preventDefault(); toast('Opening: New Collection', 'info'); return; }
+
+    // Utility bar shortcuts (by anchor text)
+    var utilA = el.closest && el.closest('.kal-utility a');
+    if (utilA) {
+      e.preventDefault();
+      var t2 = utilA.textContent.trim().toLowerCase();
+      if (/loyalty/.test(t2))     { openById('modal-rep'); return; }
+      if (/quick order/.test(t2)) { openById('modal-quickorder'); return; }
+      if (/wishlist/.test(t2))    { openById('drawer-cart'); switchTab('wishlist'); return; }
+      if (/rep|account/.test(t2)) { openById('modal-rep'); return; }
+      if (utilA.classList.contains('kal-cart')) { openById('drawer-cart'); switchTab('everyday'); return; }
+      toast('Would navigate to: ' + utilA.textContent.trim(), 'info');
+      return;
+    }
+
+    // Nav links — anchor tags in nav
+    var navA = el.closest && el.closest('.kal-nav__link, .kal-mega a');
+    if (navA && navA.tagName === 'A') {
+      e.preventDefault();
+      var tp3 = document.querySelector('.kal-proto-toggle button[data-view="plp"]');
+      if (tp3) tp3.click();
+      toast('Filtered to: ' + navA.textContent.trim(), 'info');
+      return;
+    }
+
+    // Header CTA (Apply for Wholesale)
+    var hcta = el.closest && el.closest('.kal-header__cta .kal-btn');
+    if (hcta) { e.preventDefault(); openById('modal-wholesale'); return; }
+
+    // PDP variant swatches, thumbs, qty already wired above — no-op here.
+
+    // Footer links + any remaining # anchor
+    var anyA = el.closest && el.closest('a');
+    if (anyA && anyA.getAttribute('href') === '#') {
+      e.preventDefault();
+      var label2 = anyA.getAttribute('aria-label') || anyA.textContent.trim() || 'page';
+      toast('Would navigate to: ' + label2.replace(/\s+/g, ' ').slice(0, 50), 'info');
+      return;
+    }
+  }, true);
+
+
+
+  // ---------- PDP thumbnail strip: scroll on arrow click, hide arrow at end ----------
+  (function () {
+    var strip = document.querySelector('.kal-pdp__thumbs-grid');
+    var arrow = document.querySelector('[data-thumbs-next]');
+    if (!strip || !arrow) return;
+    function updateArrow() {
+      var atEnd = strip.scrollLeft + strip.clientWidth >= strip.scrollWidth - 4;
+      arrow.style.opacity = atEnd ? '0' : '1';
+      arrow.style.pointerEvents = atEnd ? 'none' : 'auto';
+    }
+    arrow.addEventListener('click', function () {
+      strip.scrollBy({ left: strip.clientWidth * 0.7, behavior: 'smooth' });
+    });
+    strip.addEventListener('scroll', updateArrow, { passive: true });
+    // Recompute after images load in
+    setTimeout(updateArrow, 400);
+    window.addEventListener('resize', updateArrow);
+  })();
+
+  // ---------- PDP description Show more / less ----------
+  (function () {
+    var lead = document.querySelector('[data-pdp-lead]');
+    var toggle = document.querySelector('[data-pdp-lead-toggle]');
+    if (!lead || !toggle) return;
+    toggle.addEventListener('click', function () {
+      var expanded = lead.classList.toggle('is-expanded');
+      toggle.textContent = expanded ? 'Show less' : 'Show more';
+      toggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+    });
+  })();
+
+  // ---------- PDP two-state Add-to-Cart / Quantity control ----------
+  (function () {
+    var host = document.querySelector('.kal-qty-cart');
+    if (!host) return;
+    var input = host.querySelector('.kal-qty-cart__input');
+    var addBtn = host.querySelector('.kal-qty-cart__add');
+    var minus  = host.querySelector('.kal-qty-cart__remove');
+    var plus   = host.querySelector('.kal-qty-cart__plus');
+    function setQty(n) {
+      n = Math.max(0, n|0);
+      if (n === 0) {
+        host.setAttribute('data-in-cart', 'false');
+        input.value = 1;
+        toast('Removed from cart', 'info');
+        return;
+      }
+      host.setAttribute('data-in-cart', 'true');
+      input.value = n;
+    }
+    // First click on Add to Cart flips state and drops one in the cart.
+    // Guest state is intercepted by the global router (opens sign-in),
+    // so this only fires for logged-in users.
+    addBtn.addEventListener('click', function (e) {
+      if (document.body.classList.contains('is-guest')) return; // let global router handle
+      e.preventDefault();
+      e.stopPropagation();
+      setQty(1);
+      // Also actually push into the drawer cart
+      var name = (document.querySelector('.kal-pdp__name') || {}).textContent || 'Item';
+      var sku = ((document.querySelector('.kal-pdp__item-no') || {}).textContent || '').replace(/^.*:\s*/, '');
+      cart.everyday.push({ sku: sku, name: name, qty: 1, box: '', img: (document.getElementById('kal-pdp-main-img') || {}).src || '', price: 40 });
+      renderDrawer();
+      toast(name + ' added to Everyday cart', 'ok');
+    });
+    minus.addEventListener('click', function (e) {
+      e.preventDefault(); e.stopPropagation();
+      setQty((parseInt(input.value,10)||1) - 1);
+    });
+    plus.addEventListener('click', function (e) {
+      e.preventDefault(); e.stopPropagation();
+      setQty((parseInt(input.value,10)||0) + 1);
+    });
+  })();
+
+  // ---------- Quick-action icons in the condensed nav ----------
+  document.querySelectorAll('.kal-nav__icon').forEach(function (btn) {
+    btn.addEventListener('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      var kind = btn.getAttribute('data-nav-icon');
+      if (kind === 'wishlist') { openById('drawer-cart'); switchTab('wishlist'); return; }
+      if (kind === 'search') {
+        var input = document.getElementById('kal-search-input');
+        if (input) {
+          input.focus();
+          openById('modal-search');
+          var t = document.querySelector('#modal-search [data-target="search-query"]');
+          if (t) t.textContent = '"planter"';
+        }
+        return;
+      }
+      if (kind === 'account') {
+        var loggedIn = document.body.classList.contains('is-loggedin');
+        openById(loggedIn ? 'modal-rep' : 'modal-signin');
+        return;
+      }
+      if (kind === 'cart') { openById('drawer-cart'); switchTab('everyday'); return; }
+    });
+  });
+
+  // Keep the nav-icon cart badge in sync with the header cart count.
+  function syncNavCartBadge() {
+    var badge = document.querySelector('[data-nav-cart-count]');
+    if (!badge) return;
+    var count = 0;
+    document.querySelectorAll('.kal-cart__count').forEach(function (el) {
+      var n = parseInt(el.textContent, 10);
+      if (!isNaN(n)) count = n;
+    });
+    badge.textContent = count > 0 ? String(count) : '';
+    badge.setAttribute('data-empty', count === 0 ? 'true' : 'false');
+  }
+  // Observe cart-count changes so the badge stays fresh
+  var mo2 = new MutationObserver(syncNavCartBadge);
+  document.querySelectorAll('.kal-cart__count').forEach(function (el) {
+    mo2.observe(el, { childList: true, characterData: true, subtree: true });
+  });
+  syncNavCartBadge();
+
+  // ---------- Scroll-condense the topbar ----------
+  // On scroll past threshold, collapse utility + main header,
+  // leaving only the nav (with a mini logo) visible.
+  (function () {
+    var topbar = document.querySelector('.kal-topbar');
+    if (!topbar) return;
+    var threshold = 80;   // px scrolled before condensing
+    var release   = 20;   // scroll back above this to re-expand (hysteresis)
+    var condensed = false;
+    var ticking = false;
+
+    function update() {
+      var y = window.scrollY || document.documentElement.scrollTop;
+      if (!condensed && y > threshold) {
+        topbar.classList.add('is-condensed');
+        condensed = true;
+      } else if (condensed && y < release) {
+        topbar.classList.remove('is-condensed');
+        condensed = false;
+      }
+      ticking = false;
+    }
+    window.addEventListener('scroll', function () {
+      if (!ticking) { requestAnimationFrame(update); ticking = true; }
+    }, { passive: true });
+    update();
+  })();
+
+  // ---------- Hero carousel ----------
+  (function () {
+    var host = document.querySelector('[data-hero]');
+    if (!host) return;
+    var slides = host.querySelectorAll('.kal-hero__slide');
+    var dots   = host.querySelectorAll('[data-hero-goto]');
+    if (slides.length <= 1) return;
+    var current = 0;
+    var timer = null;
+    var REDUCED = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function goTo(i) {
+      current = (i + slides.length) % slides.length;
+      slides.forEach(function (s, idx) { s.classList.toggle('is-active', idx === current); });
+      dots.forEach(function (d, idx) { d.setAttribute('aria-selected', idx === current ? 'true' : 'false'); });
+    }
+    function next() { goTo(current + 1); }
+    function prev() { goTo(current - 1); }
+    function start() {
+      if (REDUCED) return;
+      stop();
+      timer = setInterval(next, 6000);
+    }
+    function stop() { if (timer) { clearInterval(timer); timer = null; } }
+
+    host.querySelector('[data-hero-prev]').addEventListener('click', function (e) { e.preventDefault(); prev(); start(); });
+    host.querySelector('[data-hero-next]').addEventListener('click', function (e) { e.preventDefault(); next(); start(); });
+    dots.forEach(function (d) {
+      d.addEventListener('click', function (e) {
+        e.preventDefault();
+        goTo(parseInt(d.getAttribute('data-hero-goto'), 10));
+        start();
+      });
+    });
+    host.addEventListener('mouseenter', stop);
+    host.addEventListener('mouseleave', start);
+    host.addEventListener('focusin', stop);
+    host.addEventListener('focusout', start);
+    // Keyboard navigation when the hero region has focus.
+    host.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowLeft')  { prev(); start(); }
+      if (e.key === 'ArrowRight') { next(); start(); }
+    });
+    start();
+  })();
+
+  // ---------- Sign-in submit: flip to logged-in state ----------
+  // Prototype behavior: accept any credentials, including empty fields.
+  // Demo user: sara@kalalou.com / Welcome123!  (kept in sync with the demo-hint block above)
+  var signinForm = document.querySelector('[data-signin-form]');
+  function performSignIn(who) {
+    var stateBtn = document.querySelector('.kal-proto-toggle button[data-state="loggedin"]');
+    if (stateBtn) stateBtn.click();
+    closeOverlay(document.getElementById('modal-signin'));
+    toast('Signed in as ' + (who || 'demo user') + ' — wholesale pricing now visible', 'ok');
+  }
+  if (signinForm) {
+    signinForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var emailInput = signinForm.querySelector('[data-signin-email]');
+      var email = (emailInput && emailInput.value.trim()) || 'sara@kalalou.com';
+      performSignIn(email);
+    });
+    // "Use demo credentials" — pre-fills then submits.
+    var demoBtn = signinForm.querySelector('[data-demo-fill]');
+    if (demoBtn) {
+      demoBtn.addEventListener('click', function () {
+        var em = signinForm.querySelector('[data-signin-email]');
+        var pw = signinForm.querySelector('[data-signin-password]');
+        if (em) em.value = 'sara@kalalou.com';
+        if (pw) pw.value = 'Welcome123!';
+        // Small delay so the fields visibly populate before the flip.
+        setTimeout(function () { performSignIn('sara@kalalou.com'); }, 250);
+      });
+    }
+  }
+
+  // ---------- Search submit ----------
+  document.querySelectorAll('form.kal-search, .kal-search').forEach(function (form) {
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var q = form.querySelector('input').value.trim() || 'planter';
+      var t = document.querySelector('#modal-search [data-target="search-query"]');
+      if (t) t.textContent = '"' + q + '"';
+      openById('modal-search');
+    });
+  });
+
+  // ---------- Sort select ----------
+  var sortSel = document.getElementById('kal-sort-select');
+  if (sortSel) sortSel.addEventListener('change', applySort);
+
+  // ---------- ESC to close ----------
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.kal-modal.is-open, .kal-drawer.is-open').forEach(closeOverlay);
+    }
+  });
+
+  // ---------- Boot ----------
+  ensureHeartsOnCards();
+  renderDrawer();
+
+  // Re-inject hearts if DOM changes (view switch)
+  var mo = new MutationObserver(function () { ensureHeartsOnCards(); });
+  mo.observe(document.body, { childList: true, subtree: true });
+
+  // Toast on view switch to confirm it worked
+  document.querySelectorAll('.kal-proto-toggle button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      // small delay so toast reads after view swap
+      setTimeout(function () { toast('View: ' + b.textContent, 'info'); }, 50);
+    });
+  });
+})();
+
+</script>
+
+<!-- ============================================================
+     Interaction shell — modals, drawer, backdrop, toast host.
+     All hidden until JS opens them. Prototype-only chrome.
+     ============================================================ -->
+
+<div class="kal-backdrop" role="presentation" aria-hidden="true"></div>
+<div class="kal-toast-container" aria-live="polite" aria-atomic="true"></div>
+
+<!-- Sign in modal -->
+<div class="kal-modal" id="modal-signin" role="dialog" aria-modal="true" aria-labelledby="modal-signin-t" hidden>
+  <div class="kal-modal__head">
+    <h2 id="modal-signin-t">Sign in</h2>
+    <button class="kal-modal__close" data-close aria-label="Close">×</button>
+  </div>
+  <div class="kal-modal__body">
+    <span class="kal-modal__eyebrow">Wholesale accounts only</span>
+    <p>Log in to see wholesale pricing, place orders, and view your account history.</p>
+    <form class="kal-form" data-signin-form onsubmit="return false;" novalidate>
+      <label>Email <input type="email" placeholder="you@company.com" autocomplete="email" data-signin-email></label>
+      <label>Password <input type="password" placeholder="••••••••" autocomplete="current-password" data-signin-password></label>
+      <div class="kal-form__actions">
+        <a href="#" data-toast="Password reset email sent">Forgot password?</a>
+        <button type="submit" class="kal-btn" data-signin-submit>Sign in</button>
+      </div>
+    </form>
+    <p class="kal-modal__note">Not a wholesale customer yet? <a href="#" data-open="modal-wholesale">Apply for an account</a>.</p>
+  </div>
+</div>
+
+<!-- Sign up / Apply for wholesale modal -->
+<div class="kal-modal kal-modal--wide" id="modal-wholesale" role="dialog" aria-modal="true" aria-labelledby="modal-wh-t" hidden>
+  <div class="kal-modal__head">
+    <h2 id="modal-wh-t">Apply for a Wholesale Account</h2>
+    <button class="kal-modal__close" data-close aria-label="Close">×</button>
+  </div>
+  <div class="kal-modal__body">
+    <p>Kalalou has been the wholesale partner of choice for retailers, designers, and boutiques since 1986. Applications are typically reviewed within 2 business days.</p>
+    <form class="kal-form" onsubmit="return false;">
+      <div class="kal-form__row">
+        <label>Business name <input type="text" required></label>
+        <label>Business type <select><option>Retail store</option><option>Interior designer</option><option>Online reseller</option><option>Distributor</option><option>Other</option></select></label>
+      </div>
+      <div class="kal-form__row">
+        <label>Contact name <input type="text" required></label>
+        <label>Phone <input type="tel" autocomplete="tel"></label>
+      </div>
+      <label>Business email <input type="email" required></label>
+      <label>Resale certificate # <input type="text" placeholder="Required for tax-exempt purchases"></label>
+      <label>Anything we should know? <textarea placeholder="Tell us about your store"></textarea></label>
+      <div class="kal-form__actions">
+        <button type="button" class="kal-btn kal-btn--ghost" data-close>Cancel</button>
+        <button type="submit" class="kal-btn">Submit application</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Quick Order modal -->
+<div class="kal-modal" id="modal-quickorder" role="dialog" aria-modal="true" aria-labelledby="modal-qo-t" hidden>
+  <div class="kal-modal__head">
+    <h2 id="modal-qo-t">Quick Order</h2>
+    <button class="kal-modal__close" data-close aria-label="Close">×</button>
+  </div>
+  <div class="kal-modal__body">
+    <p>Enter SKUs and quantities to build a cart quickly. One SKU per line — SKU comma quantity.</p>
+    <form class="kal-form" onsubmit="return false;">
+      <label>SKUs (one per line)
+        <textarea placeholder="CDV2264K, 2&#10;CHAU1000K, 1&#10;VMC1005K, 3" rows="6"></textarea>
+      </label>
+      <div class="kal-form__actions">
+        <button type="button" class="kal-btn kal-btn--ghost" data-close>Cancel</button>
+        <button type="submit" class="kal-btn" data-toast="3 items added to cart" data-close-after>Add all to cart</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Preorder confirm modal -->
+<div class="kal-modal" id="modal-preorder" role="dialog" aria-modal="true" aria-labelledby="modal-po-t" hidden>
+  <div class="kal-modal__head">
+    <h2 id="modal-po-t">Reserve this preorder</h2>
+    <button class="kal-modal__close" data-close aria-label="Close">×</button>
+  </div>
+  <div class="kal-modal__body">
+    <p><strong data-target="preorder-name">This item</strong> ships <strong>mid-September 2026</strong>. Reserving now secures your allocation. You won't be charged until the item ships (payment is captured on fulfillment per your NetSuite flow).</p>
+    <form class="kal-form" onsubmit="return false;">
+      <label>Quantity (boxes) <input type="number" min="1" value="1"></label>
+      <label>Cart to reserve into
+        <select>
+          <option>Everyday · Cart #1</option>
+          <option>Holiday · Cart #2</option>
+          <option>New cart…</option>
+        </select>
+      </label>
+      <div class="kal-form__actions">
+        <button type="button" class="kal-btn kal-btn--ghost" data-close>Not yet</button>
+        <button type="submit" class="kal-btn" data-toast="Preorder reserved · Cart updated" data-close-after>Reserve preorder</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Rep + Account modal -->
+<div class="kal-modal" id="modal-rep" role="dialog" aria-modal="true" aria-labelledby="modal-rep-t" hidden>
+  <div class="kal-modal__head">
+    <h2 id="modal-rep-t">Your Rep &amp; Account</h2>
+    <button class="kal-modal__close" data-close aria-label="Close">×</button>
+  </div>
+  <div class="kal-modal__body">
+    <div style="display:grid; grid-template-columns: 64px 1fr; gap: var(--kal-s-3); align-items: center; padding: var(--kal-s-3) 0;">
+      <div style="width:64px; height:64px; border-radius:50%; background:var(--kal-bg-alt); display:flex; align-items:center; justify-content:center; font-size:20px; letter-spacing:0.1em; color:var(--kal-secondary); font-weight:500;">JM</div>
+      <div>
+        <strong style="display:block; font-weight:500;">Jaime Miller</strong>
+        <small style="color:var(--kal-accent); letter-spacing:0.06em; font-size:12px;">Your Kalalou Sales Rep</small><br>
+        <a href="mailto:jaime@kalalou.com" style="font-size:13px; color:var(--kal-secondary);">jaime@kalalou.com</a> · <a href="tel:8002494229" style="font-size:13px; color:var(--kal-secondary);">(800) 249-4229 ext. 214</a>
+      </div>
+    </div>
+    <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: var(--kal-s-3); margin-top: var(--kal-s-4); padding-top: var(--kal-s-4); border-top:1px solid var(--kal-border);">
+      <div><small style="color:var(--kal-accent); font-size:10px; letter-spacing:0.14em; text-transform:uppercase;">Unbilled orders</small><br><strong style="font-size:18px; font-weight:500;">$4,218</strong></div>
+      <div><small style="color:var(--kal-accent); font-size:10px; letter-spacing:0.14em; text-transform:uppercase;">Aging (30/60/90)</small><br><strong style="font-size:14px; font-weight:500;">$820 / $0 / $0</strong></div>
+      <div><small style="color:var(--kal-accent); font-size:10px; letter-spacing:0.14em; text-transform:uppercase;">Loyalty tier</small><br><strong style="font-size:18px; font-weight:500; color:var(--kal-secondary);">Silver</strong></div>
+    </div>
+    <p class="kal-modal__note">Full account dashboard — order history, AR aging, invoices — is a follow-up page (see the sticky note in the build brief).</p>
+  </div>
+</div>
+
+<!-- Cart / Wishlist / Multi-cart drawer -->
+<aside class="kal-drawer" id="drawer-cart" role="dialog" aria-modal="true" aria-labelledby="drawer-cart-t" hidden>
+  <div class="kal-drawer__head">
+    <h2 id="drawer-cart-t">Your carts</h2>
+    <button class="kal-drawer__close" data-close aria-label="Close">×</button>
+  </div>
+  <div class="kal-drawer__tabs" role="tablist">
+    <button class="kal-drawer__tab is-active" data-tab="everyday" role="tab" aria-selected="true">Everyday · <span data-cart-count>2</span></button>
+    <button class="kal-drawer__tab" data-tab="holiday" role="tab" aria-selected="false">Holiday · 1</button>
+    <button class="kal-drawer__tab" data-tab="wishlist" role="tab" aria-selected="false">Wishlist · <span data-wishlist-count>0</span></button>
+  </div>
+  <div class="kal-drawer__body" data-drawer-body>
+    <!-- populated by JS -->
+  </div>
+  <div class="kal-drawer__foot">
+    <div class="kal-drawer__summary" data-drawer-summary>
+      <div class="kal-drawer__row"><span>Subtotal</span><span>—</span></div>
+      <div class="kal-drawer__row kal-drawer__row--discount"><span>Discounts</span><span>—</span></div>
+      <div class="kal-drawer__row"><span>Shipping</span><span>Free (in-stock)</span></div>
+      <div class="kal-drawer__row kal-drawer__row--total"><span>Grand total</span><span data-grand-total>—</span></div>
+    </div>
+    <button class="kal-btn" data-toast="Checkout would open next">Proceed to checkout</button>
+    <p class="kal-drawer__note">Pricing shown to logged-in wholesale customers only. Payment captured on shipment per your NetSuite flow.</p>
+  </div>
+</aside>
+
+<!-- Search results modal (opens on submit) -->
+<div class="kal-modal kal-modal--wide" id="modal-search" role="dialog" aria-modal="true" aria-labelledby="modal-search-t" hidden>
+  <div class="kal-modal__head">
+    <h2 id="modal-search-t">Search results</h2>
+    <button class="kal-modal__close" data-close aria-label="Close">×</button>
+  </div>
+  <div class="kal-modal__body">
+    <p>Searching for <strong data-target="search-query">…</strong> across 4,308 active SKUs.</p>
+    <p>In a real build this pops the PLP with your query pre-filtered and a global search suggestion drawer.</p>
+    <div class="kal-form__actions">
+      <button type="button" class="kal-btn kal-btn--ghost" data-close>Close</button>
+      <button type="button" class="kal-btn" data-open="plp-from-search" data-close-after>Show PLP</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
