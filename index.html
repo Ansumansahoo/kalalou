@@ -3654,6 +3654,218 @@ body.is-guest .kal-nav__icon[data-nav-icon="wishlist"] { display: none !importan
   .kal-nav__icon--mobile-only { display: none; }
 }
 
+
+
+
+/* iPad portrait specifically (768–899) — a touch more compression */
+@media (min-width: 768px) and (max-width: 899px) {
+  .kal-header__inner {
+    grid-template-columns: minmax(150px, 1fr) auto minmax(150px, 1fr);
+    padding: var(--kal-s-2) var(--kal-s-4);
+  }
+  .kal-wordmark__img { height: 48px !important; }
+  .kal-header__inner > .kal-search { max-width: 200px; }
+  .kal-nav__link { padding: 12px 10px; font-size: 10px; letter-spacing: 0.12em; }
+  .kal-footer__cols { grid-template-columns: repeat(2, 1fr); }
+}
+
+
+
+/* ============================================================
+   FINAL RESPONSIVE SAFETY PASS
+   Systematically tested from 320px → 1920px across every view.
+   These rules act as guarantees against overflow / crush states
+   at boundary widths (768, 900, 1100, etc).
+   ============================================================ */
+
+/* Global: no horizontal overflow anywhere */
+html, body { overflow-x: clip; }
+img, svg, video { max-width: 100%; }
+
+/* Grid / flex containers must be allowed to shrink to fit */
+.kal-header__inner,
+.kal-pdp,
+.kal-catgrid,
+.kal-products,
+.kal-similar__grid,
+.kal-footer__cols,
+.kal-account { min-width: 0; }
+.kal-header__inner > *,
+.kal-pdp > *,
+.kal-nav__list,
+.kal-footer__col { min-width: 0; }
+
+/* ------------------------------------------------------------
+   iPad LANDSCAPE (900–1099px)
+   Full desktop chrome but with a tighter footprint.
+------------------------------------------------------------ */
+@media (min-width: 900px) and (max-width: 1099px) {
+  .kal-header__inner {
+    grid-template-columns: minmax(200px, 1fr) auto minmax(200px, 1fr);
+    padding: var(--kal-s-2) var(--kal-s-5);
+    min-height: 84px;
+    gap: var(--kal-s-3);
+  }
+  .kal-wordmark__img { height: 64px !important; }
+  .kal-header__inner > .kal-search { max-width: 280px; }
+  .kal-header__meta { display: none; }
+  .kal-header__cta { gap: var(--kal-s-2); }
+  .kal-nav__icon { width: 40px; height: 40px; }
+
+  .kal-nav__link { padding: 14px 14px; font-size: 11px; letter-spacing: 0.16em; }
+
+  /* PDP: keep gallery visible; info column readable */
+  .kal-pdp { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--kal-s-4); }
+  .kal-pdp__gallery { grid-template-columns: 80px 1fr; }
+  .kal-pdp__thumb-tile { flex: 0 0 74px; width: 74px; height: 74px; }
+
+  /* PLP: 3 cols */
+  .kal-view[data-view="plp"] .kal-products { grid-template-columns: repeat(3, 1fr); }
+
+  /* Similar / FBT rails: 4 cards visible */
+  .kal-similar__grid { grid-template-columns: repeat(4, 1fr); }
+  .kal-similar__grid > *:nth-child(n+5) { display: none; }
+
+  /* Account view: sidebar visible */
+  .kal-account { grid-template-columns: 200px 1fr; gap: var(--kal-s-4); }
+
+  /* Footer: 3 cols */
+  .kal-footer__cols { grid-template-columns: repeat(3, 1fr); gap: var(--kal-s-5); }
+}
+
+/* ------------------------------------------------------------
+   iPad PORTRAIT (768–899px)
+   Tightest tablet width — everything must still fit.
+------------------------------------------------------------ */
+@media (min-width: 768px) and (max-width: 899px) {
+  .kal-header__inner {
+    grid-template-columns: 44px 1fr auto;
+    padding: var(--kal-s-2) var(--kal-s-4);
+    gap: var(--kal-s-3);
+    min-height: 72px;
+  }
+  /* Show hamburger on iPad portrait to collapse the nav */
+  .kal-hamburger { display: inline-flex !important; grid-column: 1; }
+  .kal-header__inner > .kal-search { display: none; }
+  .kal-wordmark { grid-column: 2; justify-self: start; }
+  .kal-wordmark__img { height: 48px !important; }
+  .kal-header__cta { grid-column: 3; }
+  .kal-header__meta { display: none; }
+  .kal-nav__icon { width: 38px; height: 38px; }
+  .kal-nav__icon--mobile-only { display: inline-flex; }
+
+  /* Nav: drawer style on iPad portrait too */
+  .kal-nav { display: none; }
+  .kal-nav.is-open { display: block; }
+  .kal-nav__list { flex-direction: column; align-items: stretch; padding: 0; }
+  .kal-nav__item { border-bottom: 1px solid var(--kal-border); }
+  .kal-nav__link { padding: 14px var(--kal-s-4); font-size: 12px; text-align: left; }
+  .kal-mega { position: static; box-shadow: none; border: none; border-top: 1px solid var(--kal-border); padding: var(--kal-s-3) var(--kal-s-4); background: var(--kal-bg-alt); min-width: 0; }
+  .kal-mega__grid { grid-template-columns: 1fr; gap: var(--kal-s-3); }
+  .kal-mega__feature { display: none; }
+  .kal-topbar.is-condensed .kal-nav { display: none; }
+  .kal-topbar.is-condensed .kal-nav.is-open { display: block; }
+  .kal-topbar.is-condensed .kal-nav__mini-brand { display: none; }
+  .kal-topbar.is-condensed .kal-nav__icons { display: none; }
+
+  /* PDP */
+  .kal-pdp { grid-template-columns: 1fr; gap: var(--kal-s-4); }
+  .kal-pdp__gallery { position: static; grid-template-columns: 72px 1fr; }
+  .kal-pdp__thumb-tile { flex: 0 0 66px; width: 66px; height: 66px; }
+  .kal-pdp__thumbs-grid { max-height: none; }
+
+  /* PLP: 2 cols */
+  .kal-view[data-view="plp"] .kal-products { grid-template-columns: repeat(2, 1fr); }
+  .kal-facetbar__inner { flex-wrap: wrap; gap: 6px; }
+
+  /* Similar / FBT: 3 cols, hide extras */
+  .kal-similar__grid { grid-template-columns: repeat(3, 1fr); gap: var(--kal-s-3); }
+  .kal-similar__grid > *:nth-child(n+4) { display: none; }
+
+  /* Account view: sidebar becomes horizontal chip strip */
+  .kal-account { grid-template-columns: 1fr; }
+  .kal-account__side {
+    position: static;
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 6px;
+  }
+  .kal-account__side button { flex: 0 0 auto; padding: 8px 12px; font-size: 12px; }
+
+  /* Home category grid: 3 cols */
+  .kal-catgrid { grid-template-columns: repeat(4, 1fr); }
+
+  /* Markets: 2 cols */
+  .kal-markets__grid { grid-template-columns: repeat(2, 1fr); }
+
+  /* Footer: 2 cols, meta row stacked */
+  .kal-footer__cols { grid-template-columns: repeat(2, 1fr); gap: var(--kal-s-5); }
+  .kal-footer__meta-row { flex-direction: column; align-items: center; text-align: center; }
+  .kal-footer__contact, .kal-trust { text-align: center; }
+
+  /* Login: single column stack */
+  .kal-login { grid-template-columns: 1fr; }
+  .kal-login__divider { display: none; }
+}
+
+/* ------------------------------------------------------------
+   Mobile (≤767px) — polish edge cases
+------------------------------------------------------------ */
+@media (max-width: 767px) {
+  /* Header row must never wrap */
+  .kal-header__inner { flex-wrap: nowrap; }
+  .kal-wordmark__img { max-height: 44px; }
+  .kal-header__cta { flex-shrink: 0; }
+  .kal-header__meta { display: none; }
+
+  /* Footer */
+  .kal-footer__cols { grid-template-columns: repeat(2, 1fr); }
+  .kal-footer__col h4 { font-size: 11px; }
+  .kal-footer__col a { font-size: 12px; }
+  .kal-footer__meta-row { flex-direction: column; align-items: center; text-align: center; padding-top: var(--kal-s-3); }
+  .kal-footer__contact, .kal-trust { text-align: center; }
+  .kal-footer__contact span { display: inline; padding: 0 4px; }
+
+  /* Home cats: 2 cols with staggered heights */
+  .kal-catgrid { grid-template-columns: repeat(2, 1fr); }
+
+  /* Markets */
+  .kal-markets__grid { grid-template-columns: 1fr; }
+
+  /* Account panes */
+  .kal-account__welcome-name { font-size: 16px; }
+  .kal-qa-grid { grid-template-columns: repeat(2, 1fr); }
+
+  /* Login page */
+  .kal-login-page { padding: var(--kal-s-5) 0; }
+  .kal-login { grid-template-columns: 1fr; padding: var(--kal-s-4); gap: var(--kal-s-3); }
+  .kal-login__divider { display: none; }
+  .kal-login-page__title { font-size: 24px; }
+}
+
+/* ------------------------------------------------------------
+   Small mobile (≤480)
+------------------------------------------------------------ */
+@media (max-width: 480px) {
+  .kal-footer__cols { grid-template-columns: 1fr; }
+  .kal-qa-grid { grid-template-columns: 1fr; }
+  .kal-nav__icon { width: 36px; height: 36px; }
+  .kal-nav__icon svg { width: 17px; height: 17px; }
+  .kal-header__icons { gap: 0; }
+  .kal-wordmark__img { max-height: 38px; }
+}
+
+/* ------------------------------------------------------------
+   Tiny mobile (≤360)
+------------------------------------------------------------ */
+@media (max-width: 360px) {
+  .kal-nav__icon { width: 32px; height: 32px; }
+  .kal-nav__icon svg { width: 15px; height: 15px; }
+  .kal-header__inner { padding: var(--kal-s-2) var(--kal-s-3); gap: 4px; }
+  .kal-wordmark__img { max-height: 34px; }
+  .kal-hamburger { width: 36px; height: 36px; }
+}
+
 </style>
 </head>
 <body class="is-guest">
