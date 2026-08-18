@@ -678,7 +678,7 @@ body.is-guest .kal-product-card__specs .kal-gated-price { display: none;
 .kal-mega.is-open { display: block; }
 .kal-mega__grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr)) 220px;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) 240px;
   gap: var(--kal-s-5);
 }
 .kal-mega__group h4 {
@@ -701,14 +701,20 @@ body.is-guest .kal-product-card__specs .kal-gated-price { display: none;
 .kal-mega__feature {
   border-left: 1px solid var(--kal-border);
   padding-left: var(--kal-s-4);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  align-self: start;
 }
 .kal-mega__feature img {
-  aspect-ratio: 3/4;
+  aspect-ratio: 5/4;
   width: 100%;
+  max-height: 220px;
   object-fit: cover;
   margin-bottom: var(--kal-s-3);
+  border-radius: var(--kal-radius);
 }
-.kal-mega__feature p { font-size: 12px; margin: 0 0 var(--kal-s-3); }
+.kal-mega__feature p { font-size: 12px; line-height: 1.5; margin: 0 0 var(--kal-s-3); color: var(--kal-primary); }
 
 .kal-mega__utility {
   grid-column: 1 / -1;
@@ -4317,6 +4323,197 @@ img, svg, video { max-width: 100%; }
     .kal-topbar.is-condensed .kal-nav__mini-brand img { height: 16px; max-width: 110px; }
     .kal-topbar.is-condensed .kal-nav__icons .kal-nav__icon { width: 32px; height: 32px; }
   }
+
+  .kal-mega__feature p strong {
+    display: block;
+    font-family: var(--kal-font-display);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    margin-bottom: 4px;
+    color: var(--kal-primary);
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════
+     MOBILE NAV — LEFT SLIDE-IN DRAWER
+     Fixed always on mobile; slides off-screen via transform.
+     ═══════════════════════════════════════════════════════════════════ */
+  @media (max-width: 767px) {
+    /* Nav becomes a fixed side drawer, always in DOM, transformed off-screen when closed */
+    .kal-nav {
+      position: fixed !important;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: min(88vw, 340px);
+      height: 100dvh;
+      z-index: 810;
+      background: #fff;
+      display: block !important;
+      transform: translateX(-100%);
+      transition: transform 0.28s ease;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      border: none;
+      border-right: 1px solid var(--kal-border);
+      padding: 0;
+      box-shadow: none;
+    }
+    .kal-nav.is-open {
+      transform: translateX(0);
+      box-shadow: 4px 0 20px rgba(0,0,0,0.12);
+    }
+
+    /* Sand MENU strip at top of drawer */
+    .kal-nav::before {
+      content: "MENU";
+      display: block;
+      padding: 20px var(--kal-s-5);
+      font-family: var(--kal-font);
+      font-size: 11px;
+      letter-spacing: 0.24em;
+      color: var(--kal-primary);
+      opacity: 0.6;
+      border-bottom: 1px solid var(--kal-border);
+      background: var(--kal-sand);
+    }
+
+    /* Close button (injected by JS) */
+    .kal-nav__close-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid var(--kal-border);
+      background: #fff;
+      color: var(--kal-primary);
+      font-size: 22px;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      cursor: pointer;
+      z-index: 2;
+    }
+
+    /* Vertical list */
+    .kal-nav .kal-nav__list {
+      display: flex;
+      flex-direction: column;
+      padding: 0;
+      margin: 0;
+      max-width: none;
+      width: 100%;
+    }
+    .kal-nav .kal-nav__item {
+      border-bottom: 1px solid var(--kal-border);
+      position: static !important;
+      width: 100%;
+    }
+    .kal-nav .kal-nav__link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px var(--kal-s-5);
+      font-size: 13px;
+      letter-spacing: 0.14em;
+      color: var(--kal-primary);
+      background: transparent;
+      border: none;
+      width: 100%;
+      text-align: left;
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+    .kal-nav .kal-nav__link[aria-haspopup="true"]::after {
+      content: "＋";
+      color: var(--kal-primary);
+      opacity: 0.5;
+      font-weight: 300;
+      font-size: 18px;
+      line-height: 1;
+      margin-left: auto;
+    }
+    .kal-nav .kal-nav__link[aria-expanded="true"]::after { content: "－"; }
+
+    /* Sub-mega inline expansion */
+    .kal-nav .kal-mega {
+      position: static !important;
+      transform: none !important;
+      width: 100% !important;
+      max-width: none !important;
+      min-width: 0 !important;
+      background: var(--kal-bg-alt);
+      border: none;
+      border-top: 1px solid var(--kal-border);
+      box-shadow: none;
+      padding: var(--kal-s-3) var(--kal-s-5);
+      display: none;
+    }
+    .kal-nav .kal-mega.is-open { display: block; }
+    .kal-nav .kal-mega__grid {
+      grid-template-columns: 1fr;
+      gap: var(--kal-s-3);
+    }
+    .kal-nav .kal-mega__feature { display: none; }
+    .kal-nav .kal-mega__group h4 {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      margin-bottom: 6px;
+      padding-bottom: 4px;
+    }
+    .kal-nav .kal-mega__group a {
+      font-size: 12px;
+      padding: 4px 0;
+      display: block;
+    }
+    .kal-nav .kal-mega__utility {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding-top: var(--kal-s-3);
+      justify-content: flex-start;
+      border-top: 1px solid var(--kal-border);
+      margin-top: var(--kal-s-3);
+    }
+    .kal-nav .kal-mega__utility a {
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      padding: 6px 10px;
+      border: 1px solid var(--kal-border);
+      border-radius: 999px;
+      background: #fff;
+    }
+
+    /* Backdrop */
+    .kal-nav-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.42);
+      z-index: 800;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.28s ease;
+    }
+    .kal-nav-backdrop.is-open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Hide the small nav icons cluster that used to appear in condensed state */
+    .kal-nav__icons { display: none; }
+  }
+
+  /* Desktop safety — no drawer scaffolding leaks */
+  @media (min-width: 768px) {
+    .kal-nav-backdrop { display: none !important; }
+    .kal-nav__close-btn { display: none !important; }
+  }
+
 </style>
 </head>
 <body class="is-guest">
@@ -4554,25 +4751,42 @@ img, svg, video { max-width: 100%; }
             <h4>Fall + Halloween</h4>
             <ul role="none">
               <li><a href="#" role="menuitem" data-view-link="plp">Shop Fall + Halloween</a></li>
+              <li><a href="#" role="menuitem" data-view-link="plp">Pumpkins + Gourds</a></li>
+              <li><a href="#" role="menuitem" data-view-link="plp">Harvest Décor</a></li>
+              <li><a href="#" role="menuitem" data-view-link="plp">Spooky Accents</a></li>
             </ul>
             <h4 style="margin-top: var(--kal-s-4);">Easter</h4>
             <ul role="none">
               <li><a href="#" role="menuitem" data-view-link="plp">Shop Easter</a></li>
+              <li><a href="#" role="menuitem" data-view-link="plp">Bunnies + Eggs</a></li>
             </ul>
           </div>
           <div class="kal-mega__group">
             <h4>Spring</h4>
             <ul role="none">
               <li><a href="#" role="menuitem" data-view-link="plp">Shop Spring</a></li>
+              <li><a href="#" role="menuitem" data-view-link="plp">Florals + Botanicals</a></li>
+              <li><a href="#" role="menuitem" data-view-link="plp">Garden Accents</a></li>
             </ul>
             <h4 style="margin-top: var(--kal-s-4);">Summer</h4>
             <ul role="none">
               <li><a href="#" role="menuitem" data-view-link="plp">Shop Summer</a></li>
+              <li><a href="#" role="menuitem" data-view-link="plp">Outdoor + Patio</a></li>
+              <li><a href="#" role="menuitem" data-view-link="plp">Coastal Accents</a></li>
+            </ul>
+          </div>
+          <div class="kal-mega__group">
+            <h4>Trending</h4>
+            <ul role="none">
+              <li><a href="#" role="menuitem" data-view-link="plp">Best-Selling Christmas</a></li>
+              <li><a href="#" role="menuitem" data-view-link="plp">In-Stock Holiday</a></li>
+              <li><a href="#" role="menuitem" data-view-link="plp">New for FW26</a></li>
+              <li><a href="#" role="menuitem" data-view-link="plp">Preorder Now</a></li>
             </ul>
           </div>
           <div class="kal-mega__feature">
             <img src="https://www.kalalou.com/Images/assets/KAL/FW26_Banners3.jpg" alt="" loading="lazy" />
-            <p><strong>Christmas 2026</strong><br />Order now to receive before September.</p>
+            <p><strong>Christmas 2026</strong>Order now to receive before September.</p>
             <a href="#" class="kal-btn kal-btn--sm" data-view-link="plp">Preorder</a>
           </div>
           <div class="kal-mega__utility">
@@ -4597,6 +4811,8 @@ img, svg, video { max-width: 100%; }
               <li><a href="#" role="menuitem" data-view-link="plp">For the Party Planner</a></li>
               <li><a href="#" role="menuitem" data-view-link="plp">For the Plant Enthusiast</a></li>
               <li><a href="#" role="menuitem" data-view-link="plp">For the Wine Lover</a></li>
+              <li><a href="#" role="menuitem" data-view-link="plp">For the Home Chef</a></li>
+              <li><a href="#" role="menuitem" data-view-link="plp">For the Traveler</a></li>
             </ul>
           </div>
           <div class="kal-mega__group">
@@ -4606,6 +4822,8 @@ img, svg, video { max-width: 100%; }
               <li><a href="#" role="menuitem" data-view-link="plp">Hostess</a></li>
               <li><a href="#" role="menuitem" data-view-link="plp">Housewarming</a></li>
               <li><a href="#" role="menuitem" data-view-link="plp">Teacher + Caregiver</a></li>
+              <li><a href="#" role="menuitem" data-view-link="plp">Wedding + Anniversary</a></li>
+              <li><a href="#" role="menuitem" data-view-link="plp">Birthday</a></li>
             </ul>
           </div>
           <div class="kal-mega__group">
@@ -4615,11 +4833,22 @@ img, svg, video { max-width: 100%; }
               <li><a href="#" role="menuitem" data-view-link="plp">Coastal</a></li>
               <li><a href="#" role="menuitem" data-view-link="plp">Cottagecore</a></li>
               <li><a href="#" role="menuitem" data-view-link="plp">Glam</a></li>
+              <li><a href="#" role="menuitem" data-view-link="plp">Modern Farmhouse</a></li>
+              <li><a href="#" role="menuitem" data-view-link="plp">Rustic</a></li>
+            </ul>
+          </div>
+          <div class="kal-mega__group">
+            <h4>Trending</h4>
+            <ul role="none">
+              <li><a href="#" role="menuitem" data-view-link="plp">New Gifts</a></li>
+              <li><a href="#" role="menuitem" data-view-link="plp">Bestselling Gifts</a></li>
+              <li><a href="#" role="menuitem" data-view-link="plp">In-Stock Gifts</a></li>
+              <li><a href="#" role="menuitem" data-view-link="plp">Gift Sets + Bundles</a></li>
             </ul>
           </div>
           <div class="kal-mega__feature">
             <img src="https://www.kalalou.com/Images/assets/KAL/FW26_Banners4.jpg" alt="" loading="lazy" />
-            <p><strong>Gift Guide FW26</strong><br />Curated wholesale sets to move.</p>
+            <p><strong>Gift Guide FW26</strong>Curated wholesale sets to move.</p>
             <a href="#" class="kal-btn kal-btn--sm" data-view-link="plp">See Guide</a>
           </div>
           <div class="kal-mega__utility">
@@ -7896,6 +8125,108 @@ img, svg, video { max-width: 100%; }
     return;
   }
   start();
+})();
+
+
+// ═══ MOBILE NAV — SLIDE-IN DRAWER (with stopImmediatePropagation) ═══
+(function () {
+  var nav = document.getElementById('kal-primary-nav');
+  var burger = document.querySelector('.kal-hamburger');
+  if (!nav || !burger) return;
+
+  // Backdrop
+  var backdrop = document.createElement('div');
+  backdrop.className = 'kal-nav-backdrop';
+  document.body.appendChild(backdrop);
+
+  // Close button inside nav
+  var closeBtn = document.createElement('button');
+  closeBtn.type = 'button';
+  closeBtn.className = 'kal-nav__close-btn';
+  closeBtn.setAttribute('aria-label', 'Close menu');
+  closeBtn.innerHTML = '×';
+  nav.insertBefore(closeBtn, nav.firstChild);
+
+  function isMobile() {
+    return window.matchMedia && window.matchMedia('(max-width: 767px)').matches;
+  }
+  function openDrawer() {
+    nav.classList.add('is-open');
+    backdrop.classList.add('is-open');
+    burger.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeDrawer() {
+    nav.classList.remove('is-open');
+    backdrop.classList.remove('is-open');
+    burger.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+    // Collapse any open mega
+    nav.querySelectorAll('.kal-mega.is-open').forEach(function (m) { m.classList.remove('is-open'); });
+    nav.querySelectorAll('.kal-nav__link[aria-expanded="true"]').forEach(function (l) { l.setAttribute('aria-expanded', 'false'); });
+  }
+
+  // Intercept hamburger click in CAPTURE phase + stopImmediatePropagation
+  // beats the existing hamburger handler that would otherwise toggle .is-open back off.
+  burger.addEventListener('click', function (e) {
+    if (!isMobile()) return;  // desktop unaffected
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
+    if (nav.classList.contains('is-open')) closeDrawer();
+    else openDrawer();
+  }, true);
+
+  closeBtn.addEventListener('click', function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    closeDrawer();
+  });
+  backdrop.addEventListener('click', closeDrawer);
+
+  // ESC closes
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && nav.classList.contains('is-open')) closeDrawer();
+  });
+
+  // Any real navigation click inside closes (except mega toggle buttons)
+  nav.addEventListener('click', function (e) {
+    if (!isMobile()) return;
+    var target = e.target;
+    if (target.closest('.kal-nav__close-btn')) return;
+    if (target.closest('.kal-nav__link[aria-haspopup="true"]')) return;  // let expand run
+    var link = target.closest('a[data-view-link], a[href]:not([href="#"])');
+    if (link) {
+      setTimeout(closeDrawer, 60);
+    }
+  });
+
+  // Resize to desktop → clean up
+  window.addEventListener('resize', function () {
+    if (!isMobile() && nav.classList.contains('is-open')) {
+      closeDrawer();
+    }
+  });
+
+  // Mobile mega expand/collapse — inline within the drawer
+  nav.addEventListener('click', function (e) {
+    if (!isMobile()) return;
+    var btn = e.target.closest('.kal-nav__link[aria-haspopup="true"][data-mega]');
+    if (!btn) return;
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
+    var megaId = btn.getAttribute('data-mega');
+    var mega = document.getElementById(megaId);
+    if (!mega) return;
+    var open = mega.classList.contains('is-open');
+    nav.querySelectorAll('.kal-mega.is-open').forEach(function (m) { m.classList.remove('is-open'); });
+    nav.querySelectorAll('.kal-nav__link[aria-expanded="true"]').forEach(function (l) { l.setAttribute('aria-expanded', 'false'); });
+    if (!open) {
+      mega.classList.add('is-open');
+      btn.setAttribute('aria-expanded', 'true');
+    }
+  }, true);
 })();
 
 </script>
